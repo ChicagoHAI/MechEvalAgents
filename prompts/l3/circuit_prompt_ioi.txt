@@ -1,0 +1,162 @@
+# Large Circuit Tracing Experiment — IOI Circuit
+
+## PLAN FILE — DO NOT MODIFY
+
+### ROLE
+
+You are a **senior mechanistic interpretability researcher**.
+
+### MODEL AND DATA
+
+* Use model: **gpt2-small** loaded via **HookedTransformer**.
+* Use dataset: **mib-bench/ioi**.
+* Ignore files under `runs/`.
+
+---
+
+### GOAL
+
+Identify a **precise circuit**—a subset of attention heads and MLPs—that reproduces the model’s **Indirect Object Identification (IOI)** behavior as faithfully as possible while obeying strict **residual write-budget constraints**.
+
+---
+
+### TASK DESCRIPTION
+
+A sentence in the IOI dataset has an **initial dependent clause** and a **main clause**:
+Example: *“When Mary and John went to the store, John gave a bottle of milk to Mary.”*
+
+* The dependent clause introduces the **Indirect Object (IO)** “Mary” and the **Subject (S)** “John”.
+* The main clause refers to the subject again, and the model must predict that the **final token** is the **IO**.
+* We use `S1` and `S2` to denote the first and second subject mentions.
+* The IOI task evaluates whether the model correctly predicts the final IO token.
+
+---
+
+### HYPOTHESIS, TESTING, AND REFINEMENT LOOP
+
+You must follow an **iterative reasoning workflow** consisting of multiple planning and execution phases:
+
+#### Phase 1 — Initial Hypothesis
+
+1. Formulate an **initial hypothesis** about what types of heads or MLPs might contribute to IOI behavior.
+
+   * This hypothesis can be inspired by intuition, prior interpretability findings, or exploratory probing.
+   * Clearly describe what functional roles you expect (e.g., “token matching,” “name copying,” “role inhibition”) and at which layers these may occur.
+2. Save this initial hypothesis and experimental outline in **`logs/plan_v1.md`** and **`notebooks/plan_v1_Md.ipynb`**.
+   This file should contain:
+
+   * A step-by-step plan for how to probe, test, and verify this hypothesis.
+   * Expected observable evidence for success or failure.
+
+#### Phase 2 — Testing the Hypothesis
+
+1. Implement the plan to test your initial hypothesis using **HookedTransformer**.
+
+   * Use activation patching, ablation, or residual stream attribution to evaluate which components are necessary and sufficient for correct IOI predictions.
+2. Save code and results from this phase.
+
+   * All experiments must be traceable and reproducible.
+
+#### Phase 3 — Refined Hypothesis and Replanning
+
+1. Based on results, update your hypothesis. Identify any new functional patterns or interactions between nodes.
+2. Write a **refined plan** as `logs/plan_v2.md` (and optionally later versions if further iterations are required).
+3. Repeat experimentation until your identified circuit:
+
+   * Faithfully reproduces IOI behavior,
+   * Respects the write constraint (≤ 11,200),
+   * Contains interpretable and minimally sufficient nodes.
+
+Your work should therefore produce **multiple plans** (Plan v1, v2, etc.) representing the iterative reasoning path from hypothesis → testing → refinement → final circuit discovery.
+
+---
+
+### SRC_NODES
+
+```
+[
+  'input',
+  'a0.h0','a0.h1',...,'a0.h11','m0',
+  'a1.h0',...,'a1.h11','m1',
+  'a2.h0',...,'a2.h11','m2',
+  'a3.h0',...,'a3.h11','m3',
+  'a4.h0',...,'a4.h11','m4',
+  'a5.h0',...,'a5.h11','m5',
+  'a6.h0',...,'a6.h11','m6',
+  'a7.h0',...,'a7.h11','m7',
+  'a8.h0',...,'a8.h11','m8',
+  'a9.h0',...,'a9.h11','m9',
+  'a10.h0',...,'a10.h11','m10',
+  'a11.h0',...,'a11.h11','m11'
+]
+```
+
+---
+
+### CONSTRAINTS
+
+* You must always **generate a plan before implementation**, and update it after each refinement.
+* Each attention head writes `d_model / n_heads` dimensions.
+* Each MLP writes `d_model` dimensions.
+* **Total writes ≤ 11,200.**
+* Only include nodes from `src_nodes`.
+* Node names must follow `a{layer}.h{head}`, `m{layer}`, or `input`.
+
+---
+
+## EXPECTED OUTPUTS
+
+### FINAL CIRCUIT FILE
+
+Save node list to `real_circuits_1.json`:
+
+```json
+{
+  "nodes": ["{An example input of the dataset}", "a3.h4", "m4", ...]
+}
+```
+
+Check that:
+
+* All nodes are in `src_nodes`.
+* Total writes ≤ 11,200.
+* Naming is consistent.
+
+---
+
+### FILES TO PRODUCE
+
+**Logs (Markdown):**
+
+* `logs/plan_v1.md`, `logs/plan_v2.md`, … (each iteration)
+* `logs/documentation.md`
+* `logs/code_walk.md`
+
+**Notebooks:**
+
+* `notebooks/plan_v1_Md.ipynb`, `notebooks/plan_v2_Md.ipynb`, …
+* `notebooks/documentation_Md.ipynb`
+* `notebooks/code_walk_Md.ipynb`
+
+---
+
+### DOCUMENTATION REQUIREMENTS
+
+`logs/documentation.md` must include:
+
+1. **Goal** — Hypothesis evolution and circuit objective.
+2. **Data** — Example IOI sentences and labels.
+3. ***Method* - Methods used to do the research.
+4. **Results** — Final circuit list, metrics before/after selection, and budget checks.
+5. **Analysis** — How each iteration refined the circuit hypothesis.
+6. **Next Steps** — Future directions or open questions.
+7. **Main Takeaways** - What the results implicates, and what can be learned from the results.
+
+---
+
+### OUTPUT SUMMARY
+
+* `real_circuits_1.json` — final node list.
+* `logs/` — documentation, plan, and iteration markdowns.
+* `notebooks/` — supporting notebooks for each plan version.
+* Optional visualizations (attention, ablation, patching, causal effect).

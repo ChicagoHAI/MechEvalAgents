@@ -1,0 +1,147 @@
+# Large Circuit Tracing Experiment — Acronym Circuit
+
+## PLAN FILE — DO NOT MODIFY
+
+### ROLE
+
+You are a **senior mechanistic interpretability researcher**.
+
+### MODEL AND DATA
+
+* Use model: **gpt2-small** loaded via **HookedTransformer**.
+* Dataset: **Acronym Dataset** — synthetic and curated examples containing both *definition-first (DF)* and *acronym-first (AF)* patterns.
+* Ignore files under `runs/`.
+
+### GOAL
+
+Identify a **precise circuit (subset of attention heads and MLPs)** that reproduces the model’s **acronym behavior** (linking acronyms ↔ expansions) **faithfully** under a strict write-size constraint.
+
+### TASK DESCRIPTION
+
+* DF examples: “The *National Aeronautics and Space Administration* (**NASA**) launched the rocket.”
+* AF examples: “**NASA** (*National Aeronautics and Space Administration*) launched the rocket.”
+* The model must map between expanded phrase (**DEF**) and acronym (**ACR**) spans using surrounding context (**CTX**).
+* Evaluate next-token predictions within ACR (DF) and DEF (AF).
+
+### HYPOTHESIS
+
+The circuit consists of four main head classes:
+
+1. **Boundary Heads** — detect parentheses and phrase limits, write boundary/position info.
+2. **Initial-Letter Mapping (ILM) Heads** — connect acronym letters to initials of DEF words.
+3. **Disambiguation Heads** — select the correct expansion using CTX semantics.
+4. **Name/Span Mover Heads** — copy span content from DEF → ACR or ACR → DEF.
+
+Associated MLPs encode capitalization and parenthetical features.
+
+### SOURCE NODES
+
+Use only nodes from:
+
+```
+input,
+a{0–11}.h{0–11},
+m{0–11}
+```
+
+### CONSTRAINTS
+
+* You should always generate a plan before implementation.
+* Each head writes `d_model / n_heads` dimensions.
+* Each MLP writes `d_model` dimensions.
+* **Total writes ≤ 11,200**.
+* Only use nodes in `src_nodes`.
+* No edits to plan structure.
+
+---
+
+## EXPERIMENT STEPS
+
+### 1. INITIALIZATION
+
+* Open a fresh notebook.
+* Load **gpt2-small** and **acronym dataset**.
+* Load node list (`src_nodes`).
+
+### 2. DEFINE METRICS
+
+* DF metric: logit diff between correct ACR next-token and distractors.
+* AF metric: logit diff between correct DEF next-token and distractors.
+* Compute average rank and accuracy across samples.
+
+### 3. HOOKING AND INTERVENTIONS
+
+* Add **forward hooks** on residual-stream outputs of attention heads and MLPs.
+* Perform:
+
+  * **Ablation** (zero out activations).
+  * **Patching** (replace with counterfactual activations from modified examples).
+* Use matched **counterfactuals** where DEF ↔ ACR pairs are swapped or mismatched.
+
+### 4. CIRCUIT DISCOVERY
+
+* Rank nodes by their effect on acronym prediction accuracy under ablation/patching.
+* Build minimal circuit via **greedy search** constrained by write budget.
+* Test sufficiency: only preserve circuit, patch others counterfactually → behavior should restore.
+* Test necessity: ablate circuit → performance should drop.
+
+### 5. RESULTS AND OUTPUTS
+
+* Save final node list:
+
+  ```
+  real_circuits_acronyms.json
+  {
+    "nodes": ["input", "a3.h4", "m4", ...]
+  }
+  ```
+* Verify:
+
+  * All nodes valid and ≤ 11,200 writes.
+  * Naming follows pattern (`aL.H`, `mL`, `input`).
+
+---
+
+## FILES TO PRODUCE
+
+**Logs (Markdown):**
+
+* `logs/plan.md`
+* `logs/documentation.md`
+* `logs/code_walk.md`
+
+**Notebooks:**
+
+* `notebooks/plan_Md.ipynb`
+* `notebooks/documentation_Md.ipynb`
+* `notebooks/code_walk_Md.ipynb`
+
+**Dataset:**
+
+* `data/acronyms/train.jsonl`
+* `data/acronyms/val.jsonl`
+* `data/acronyms/test.jsonl`
+
+---
+
+## DOCUMENTATION REQUIREMENTS
+
+`logs/documentation.md` must include:
+
+1. **Goal** — What hypothesis and components are tested.
+2. **Data** — Show DF/AF examples and distractors.
+3. **Experiments** — Describe methodology, sample count, metrics, results.
+4. **Results** — Include before/after intervention metrics, plots if helpful.
+5. **Analysis** — Which nodes are necessary/sufficient.
+6. **Next Steps** — e.g., robustness to nested parentheses, multilingual acronyms, noisy capitalization.
+
+---
+
+## OUTPUT SUMMARY
+
+* **Final circuit JSON**
+* **Metric tables** for DF and AF tasks
+* **Full documentation & plan files**
+* **Plots** (optional but encouraged)
+
+---

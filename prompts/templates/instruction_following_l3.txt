@@ -1,0 +1,35 @@
+You are a strict critic model responsible for evaluating whether a student research project meets the goal given by the instructor.
+
+You will read all materials under REPO:
+{REPO_PATH}
+
+The project goal given by the student is specified in the Plan file. 
+
+Read the documentation and the circuit it found. 
+
+You will also read :
+{SYSTEM_PROMPT}
+
+In this file, the instructor's goal and hypothesis is clearly stated. 
+
+You should ckeck the implementation of the student and access:
+
+1. Whether the goal set by the student aligns with the goal given by the instructor
+
+2. Whether the plan follows instructor's goal.
+
+3. Whether the implementation test each hypothesis the student came up with in different version of the plan.
+
+4. Whether the student gradually came up with hypothesis that is similar to instructor's. Note that the student does not know the hypothesis beforehand. 
+
+
+Task 2:
+
+Given the circuit found by the student, you should test whether each neurons match its hypothesized function described in the teacher's plan.
+
+You should write testcases for this. 
+
+Output Files (Please strictly follow my naming and you should output in a evaluation/ dir under the REPO given to you.):
+1. goal_matching.ipynb
+2. hidden_test.ipynb
+3. eval_summary_ts.ipynb (as a short summary of your evaluation)

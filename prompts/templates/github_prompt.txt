@@ -1,0 +1,2 @@
+Please make a github PR request about what just changed in the circuit implementation. Do not push prompts or dataset. You should push the implementation of your code in the runs, your results and documentations including: plan, documentation and code_walkthrough. 
+You can put your github command in notebooks/git_push.ipynb and run that. Please add the time and the proper description of the pr request. You should always push to a new branch.

@@ -1,0 +1,143 @@
+# Large Circuit Tracing Experiment — Greater-Than Circuit
+
+## PLAN FILE — DO NOT MODIFY
+
+### ROLE
+
+You are a **senior mechanistic interpretability researcher**.
+
+### MODEL AND DATA
+
+* Use model: **gpt2-small** loaded via **HookedTransformer**.
+* Dataset: Year-span prediction dataset (see Task Description).
+* Ignore files under `runs/`.
+
+### GOAL
+
+Identify a **precise circuit (subset of attention heads and MLPs)** that reproduces the model’s **“greater-than” behavior** on a synthetic year-span prediction task (performed by GPT-2) as faithfully as possible while obeying a strict write-size constraint.
+
+### TASK DESCRIPTION
+
+* Input format: “The *<event>* lasted from the year XXYY to the year XX”. Example: “The war lasted from the year 1732 to the year 17”. ([arXiv][1])
+* The model should assign higher probability to two-digit end-years > YY (i.e., performing the operation “>”). ([arXiv][1])
+* We will evaluate the model’s next-token distribution on the predicted two-digit end-year slot, measure how sharply it distinguishes > YY vs ≤ YY.
+
+### HYPOTHESIS (Circuit Proposal)
+
+The circuit comprises:
+
+1. **Year-Start Detection Heads** — attend to the start-year token span (YY) and write a feature identifying the threshold.
+2. **Comparison Trigger MLPs** — compute a “greater than” gating signal based on YY features, boosting logits of candidate end years > YY.
+3. **Output Selector Heads / MLPs** — route the gating signal to unembedding/logit space and enhance the probability mass on valid > YY tokens.
+4. The circuit generalizes across contexts with different events and year spans; it **does not** reflect full arithmetic competence but a learned heuristic mechanism. ([arXiv][1])
+
+### SRC_NODES
+
+```
+[
+ 'input',
+ a0.h0,a0.h1,…,a0.h11,m0,
+ a1.h0,…,a1.h11,m1,
+ …
+ a11.h0,…,a11.h11,m11
+]
+```
+
+### CONSTRAINTS
+
+* You should always generate a plan before implementation.
+* Each attention head writes `d_model / n_heads` dimensions; each MLP writes `d_model`.
+* Total writes must **not exceed 11,200**.
+* Only include nodes from the provided `src_nodes`.
+* Naming must follow allowed formats.
+
+---
+
+## EXPERIMENT STEPS
+
+### 1. INITIALIZATION
+
+* Start a new notebook.
+* Load `gpt2-small` via HookedTransformer.
+* Build or load the year-span prediction dataset (train/val/test splits).
+* Load the node list (`src_nodes`).
+
+### 2. DEFINE METRICS
+
+* **Probability Difference**: ∑*{y>YY} p(y) − ∑*{y≤YY} p(y). ([ar5iv][2])
+* **Cutoff Sharpness**: p(YY+1) − p(YY-1).
+* Report average and standard deviation over the validation set.
+
+### 3. HOOKING & INTERVENTIONS
+
+* Insert forward hooks at the residual writes of attention heads and MLPs from `src_nodes`.
+* Perform **ablation experiments**: zero out activations for candidate nodes.
+* Perform **patching experiments**: replace activations with counterfactuals (e.g., swapped start years) and observe metric drops.
+* Track which nodes cause large metric changes → candidates for the circuit.
+
+### 4. CIRCUIT DISCOVERY
+
+* Rank candidate nodes by impact on metrics.
+* Build a minimal node subset via greedy search under the write-budget constraint.
+* **Sufficiency test**: preserve only the circuit nodes, patch others → performance should remain close to baseline.
+* **Necessity test**: ablate circuit nodes while leaving others intact → performance should drop significantly.
+
+### 5. RESULTS & OUTPUTS
+
+* Print the final node list clearly in the notebook.
+* Save node list to `real_circuits_gt.json`:
+
+  ```json
+  {
+    "nodes": ["input","a8.h3","m10",...]
+  }
+  ```
+* Verify: all nodes from `src_nodes`; write-budget ≤ 11,200; correct naming.
+
+---
+
+## FILES TO PRODUCE
+
+**Logs (Markdown):**
+
+* `logs/plan.md`
+* `logs/documentation.md`
+* `logs/code_walk.md`
+
+**Notebooks:**
+
+* `notebooks/plan_Md.ipynb`
+* `notebooks/documentation_Md.ipynb`
+* `notebooks/code_walk_Md.ipynb`
+
+**Dataset:**
+
+* `data/gt/train.jsonl`
+* `data/gt/val.jsonl`
+* `data/gt/test.jsonl`
+
+---
+
+## DOCUMENTATION REQUIREMENTS
+
+`logs/documentation.md` must cover:
+
+1. **Goal**: What hypothesis is tested? Which components are studied?
+2. **Data**: Provide template and example sentences; describe sampling of start years etc.
+3. **Experiment**: What tools (HookedTransformer, path-patching) were used? How many examples? What metrics?
+4. **Results**: Full metrics before/after intervention; plots of cutoff behavior; circuit details.
+5. **Analysis**: Which nodes are necessary/sufficient? What semantic roles do they have?
+6. **Next Steps**: E.g., test on other operations (less-than, addition), other models, larger parameter scales.
+
+---
+
+## OUTPUT SUMMARY
+
+* **Final circuit JSON**
+* **Metrics table** (Probability difference, cutoff sharpness)
+* **Full documentation & plan files**
+* **Plots** (optional but recommended for clarity)
+
+---
+
+**End of plan.txt**
