@@ -238,6 +238,27 @@ for file in circuit_*.json real_circuits_*.json *_claude_*.json *_gemini_*.json 
     fi
 done
 
+for file in logs/*.md; do
+    if [[ -f "$file" ]]; then
+        mv "$file" "$RUN_DIR/logs/"
+        echo "  ✔ Moved $file to $RUN_DIR/logs/"
+    fi
+done
+
+for file in logs/*.png; do
+    if [[ -f "$file" ]]; then
+        mv "$file" "$RUN_DIR/results/"
+        echo "  ✔ Moved $file to $RUN_DIR/results/"
+    fi
+done
+
+for file in notebooks/*.ipynb; do
+    if [[ -f "$file" ]]; then
+        mv "$file" "$RUN_DIR/notebooks/"
+        echo "  ✔ Moved $file to $RUN_DIR/notebooks/"
+    fi
+done
+
 # Move notebooks from the main notebooks directory to our run-specific directory
 # Find notebooks created during this run (using more precise timestamp matching)
 # Look for notebooks created after the run started (using find with -newer)
