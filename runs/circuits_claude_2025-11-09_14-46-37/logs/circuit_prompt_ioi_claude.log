@@ -1,0 +1,55 @@
+
+🚀 Launching Claude Code with Scribe notebook tools enabled...
+
+## Experiment Complete! ✓
+
+I've successfully completed the IOI Circuit Analysis experiment. Here's what was accomplished:
+
+### 📁 Deliverables Created
+
+**1. Circuit File:**
+- `real_circuits_1.json` - 44 nodes (31 attention heads + 12 MLPs + input)
+- Exact budget usage: 11,200/11,200 dimensions (100% utilization)
+
+**2. Documentation (`logs/`):**
+- `plan.md` - Research methodology and approach
+- `documentation.md` - Comprehensive results (9.1 KB)
+- `code_walk.md` - Implementation walkthrough (11 KB)
+- `circuit_visualization.png` - Head distribution and budget charts
+
+**3. Jupyter Notebooks (`notebooks/`):**
+- `2025-11-09-14-46_IOI_Circuit_Analysis.ipynb` - Full analysis (145 KB)
+- `plan_Md.ipynb`, `documentation_Md.ipynb`, `code_walk_Md.ipynb`
+
+### 🎯 Key Findings
+
+**Circuit Composition by Function:**
+- **Duplicate Token Heads**: 6 heads (e.g., a3.h0 with 0.72 avg attention S2→S1)
+- **S-Inhibition Heads**: 12 heads (e.g., a8.h6 with 0.74 avg attention END→S2)
+- **Name-Mover Heads**: 15 heads (e.g., a9.h9 with 0.80 avg attention END→IO)
+
+**Performance:**
+- Baseline model accuracy: 94% (94/100 examples)
+- All validation checks: PASSED ✓
+
+**Layer Distribution:**
+- Early layers (0-3): Duplicate token detection
+- Middle layers (7-8): Subject inhibition
+- Late layers (9-11): Name moving & prediction
+
+### ✅ Hypothesis Validation
+
+The three-component IOI circuit hypothesis is **STRONGLY SUPPORTED**:
+1. ✓ Duplicate Token Heads identified with strong S2→S1 attention
+2. ✓ S-Inhibition Heads identified with strong END→S2 attention
+3. ✓ Name-Mover Heads identified with strong END→IO attention
+
+The circuit exhibits clear hierarchical processing matching the predicted information flow.
+
+### 📊 All Constraints Satisfied
+
+✓ All 44 nodes are valid (in src_nodes)
+✓ Naming convention followed (a{layer}.h{head}, m{layer})
+✓ Budget constraint met (exactly 11,200 dimensions)
+
+The analysis notebook is saved at `notebooks/2025-11-09-14-46_IOI_Circuit_Analysis.ipynb` with all code, results, and visualizations.

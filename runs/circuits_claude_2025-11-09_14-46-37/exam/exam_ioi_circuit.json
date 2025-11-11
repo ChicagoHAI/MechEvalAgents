@@ -1,0 +1,232 @@
+[
+  {
+    "question_type": "multiple_choice",
+    "question": "In the IOI task, what does the model need to predict at the END position?",
+    "choices": [
+      "A) The subject (S) who performs the action",
+      "B) The indirect object (IO) who receives the item",
+      "C) The object being given",
+      "D) The location where the action takes place"
+    ],
+    "answer": "B) The indirect object (IO) who receives the item",
+    "reference": "Section 2 (Data) - The task is to predict the indirect object at the end of a sentence. Example: 'As Carl and Maria left the consulate, Carl gave a fridge to ___' \u2192 Answer: Maria"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Consider a new sentence: 'When Alice and Bob arrived at the museum, Alice handed a notebook to ___'. Identify the S1, S2, IO, and END positions. Explain what makes this sentence follow the IOI pattern.",
+    "choices": null,
+    "answer": "S1 would be at the first mention of 'Alice' (position varies by tokenization), S2 would be at the second mention of 'Alice', IO would be at 'Bob', and END would be at 'to' (the final token). This follows the IOI pattern because: (1) it has a repeated subject name (Alice), (2) it has a distinct indirect object name (Bob), (3) the subject appears first, then both names appear together, then the subject repeats before performing an action directed at the IO, and (4) the model must predict the IO name at the end.",
+    "reference": "Section 2 (Data) - Key Positions and Example Sentence Structure"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What is the primary dataset used for this IOI circuit analysis?",
+    "choices": [
+      "A) GPT-2 training corpus",
+      "B) mib-bench/ioi from Hugging Face",
+      "C) Custom synthetic IOI dataset",
+      "D) Common Crawl subset"
+    ],
+    "answer": "B) mib-bench/ioi from Hugging Face",
+    "reference": "Section 2 (Data) - Dataset subsection clearly states Source: mib-bench/ioi (Hugging Face), Size: 10,000 examples"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The hypothesis proposes three types of attention heads. For each type, describe: (a) what positions it attends between, and (b) what functional role it plays in solving the IOI task.",
+    "choices": null,
+    "answer": "(1) Duplicate Token Heads: Attend from S2 to S1, detecting that the same name appears twice to signal token duplication through position features. (2) S-Inhibition Heads: Attend from END to S2, inhibiting the Name-Mover heads from attending to the subject position, preventing the model from incorrectly predicting the subject. (3) Name-Mover Heads: Attend from END to IO, copying the indirect object token to the residual stream so it can be predicted at the output.",
+    "reference": "Section 1 (Goal) - Hypothesis, and Section 3.2 (Attention Pattern Analysis)"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "Why is the S-Inhibition mechanism necessary for the IOI circuit?",
+    "choices": [
+      "A) To amplify the signal from the indirect object",
+      "B) To prevent the Name-Mover heads from incorrectly attending to and copying the subject name",
+      "C) To detect duplicate tokens in the input sequence",
+      "D) To increase the overall model accuracy"
+    ],
+    "answer": "B) To prevent the Name-Mover heads from incorrectly attending to and copying the subject name",
+    "reference": "Section 1 (Goal) - Hypothesis describes S-Inhibition Heads as 'inhibiting Name-Mover attention to subject positions'"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "If you select 25 attention heads and 10 MLPs for your circuit, how many dimensions would this consume? Show your calculation and state whether this fits within the budget constraint.",
+    "choices": null,
+    "answer": "Attention heads: 25 heads \u00d7 64 dims/head = 1,600 dims. MLPs: 10 MLPs \u00d7 768 dims/MLP = 7,680 dims. Total: 1,600 + 7,680 = 9,280 dimensions. This DOES fit within the budget constraint of \u226411,200 dimensions. Remaining budget: 11,200 - 9,280 = 1,920 dimensions.",
+    "reference": "Section 3.2 (Write Budget Constraints) - Each attention head writes 64 dimensions, each MLP writes 768 dimensions, total budget \u226411,200 dimensions"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What is the dimensionality of each attention head's output in GPT2-small?",
+    "choices": [
+      "A) 768 dimensions (d_model)",
+      "B) 3,072 dimensions (d_mlp)",
+      "C) 64 dimensions (d_head)",
+      "D) 12 dimensions (n_heads)"
+    ],
+    "answer": "C) 64 dimensions (d_head)",
+    "reference": "Section 3.1 (Model Configuration) and Section 3.2 (Write Budget Constraints) - d_head = 64, calculated as d_model / n_heads = 768 / 12"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Describe the methodology used to identify 'Duplicate Token Heads'. What metric was calculated, and what threshold or selection criterion was used?",
+    "choices": null,
+    "answer": "To identify Duplicate Token Heads, the researchers calculated the attention weight from position S2 to position S1 for each attention head across all examples, then averaged these weights. Heads were ranked by their average S2\u2192S1 attention score. The top 5 heads with highest scores were identified (e.g., a3.h0 with 0.7191 average attention). The selection criterion was based on ranking - choosing heads with the strongest attention patterns to the hypothesized target positions.",
+    "reference": "Section 3.3 (Analysis Pipeline) - Step 2: Attention Pattern Analysis, specifically the Duplicate Token Heads subsection"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "The baseline model achieved 94% accuracy on the IOI task. What does this tell us about the model's behavior?",
+    "choices": [
+      "A) The model has perfectly learned the IOI task",
+      "B) The model has strong learned behavior for IOI but makes some errors",
+      "C) The model is randomly guessing between two options",
+      "D) The model's circuit identification is incorrect"
+    ],
+    "answer": "B) The model has strong learned behavior for IOI but makes some errors",
+    "reference": "Section 4 (Results) - Performance Metrics and Section 7 (Main Takeaways) point 4: 'High Baseline Performance: GPT2-small achieves 94% accuracy on IOI, indicating strong learned behavior for this task'"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The documentation shows that Duplicate Token Heads are in layers 0-3, S-Inhibition Heads in layers 7-8, and Name-Mover Heads in layers 9-11. What computational principle does this layered organization suggest about how the circuit processes information?",
+    "choices": null,
+    "answer": "This layered organization suggests hierarchical or sequential processing: early layers detect low-level patterns (duplicate tokens), middle layers perform intermediate computations (inhibiting interference from the subject), and late layers perform final high-level operations (selecting and copying the correct answer). This reflects a compositional processing strategy where complex tasks are broken down into stages, with earlier layers extracting features that later layers use for decision-making.",
+    "reference": "Section 5 (Analysis) - Key Observations point 1: 'Layered Processing', and Section 7 (Main Takeaways) point 3: 'Layer Hierarchy Matters'"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "The final circuit contains 31 attention heads and 12 MLPs. What is the total dimensional write budget consumed?",
+    "choices": [
+      "A) 10,200 dimensions",
+      "B) 11,200 dimensions",
+      "C) 12,000 dimensions",
+      "D) 9,984 dimensions"
+    ],
+    "answer": "B) 11,200 dimensions",
+    "reference": "Section 4 (Results) - Budget Verification table shows: 31 heads \u00d7 64 = 1,984 dims + 12 MLPs \u00d7 768 = 9,216 dims = 11,200 total dimensions"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Suppose you wanted to adapt this IOI circuit discovery methodology to identify circuits for a different task: detecting whether a pronoun refers to the first or second mentioned person in a sentence (pronoun resolution). What modifications would you make to the attention pattern analysis? Specifically, what new attention patterns would you measure?",
+    "choices": null,
+    "answer": "For pronoun resolution, you would measure: (1) Attention from the pronoun position to each candidate antecedent position (to identify which heads attend to potential referents), (2) Attention patterns that discriminate between first and second mentions based on recency or positional encoding, (3) Attention from the pronoun to syntactic markers (e.g., gender cues, number agreement) that constrain reference, (4) Potential inhibition patterns that suppress incorrect antecedents. The core methodology would remain similar\u2014identify positions of interest, measure attention patterns, rank heads by alignment with hypothesized behavior\u2014but the specific positions and patterns would change to match the pronoun resolution task structure.",
+    "reference": "Section 3.3 (Analysis Pipeline) - Attention Pattern Analysis methodology, and Section 7 (Main Takeaways) point 7 about generalizable methodology"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "A student claims: 'The circuit uses 10.1% of the model's capacity, which means 89.9% of GPT2-small's parameters are unnecessary and could be removed.' Identify the flaw in this reasoning.",
+    "choices": null,
+    "answer": "The flaw is conflating task-specific capacity usage with overall model utility. The 10.1% figure refers to the dimensions used for the IOI task specifically, not the entire model. GPT2-small performs many different tasks beyond IOI (language modeling, various NLP tasks), and different circuits likely implement different capabilities. The remaining 89.9% is not 'unnecessary'\u2014it's used for other linguistic computations. Additionally, there may be redundant or backup pathways, and some capacity may be used for feature extraction that supports multiple tasks. Removing 89.9% of the model would destroy its ability to perform other tasks.",
+    "reference": "Section 7 (Main Takeaways) point 5: 'The circuit uses only 11,200 of 110,592 possible dimensions (10.1% of total model capacity), suggesting IOI is implemented by a relatively sparse subcircuit' - this is about task-specific circuits, not model redundancy"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The documentation suggests 'Ablation Studies' as a next step to measure performance impact. Design a specific ablation experiment to test whether S-Inhibition Heads are causally necessary for the IOI circuit. What would you ablate, what would you measure, and what result would support their causal necessity?",
+    "choices": null,
+    "answer": "Experimental design: (1) Ablation: Zero out or remove the outputs of all identified S-Inhibition Heads (e.g., a8.h6, a7.h9, etc.) while keeping all other circuit components active. (2) Measurement: Evaluate model accuracy on the IOI task - specifically, measure how often the model incorrectly predicts the subject (S) instead of the indirect object (IO). Also measure the attention patterns of Name-Mover Heads to see if they now attend more to S2 position. (3) Expected result supporting causal necessity: Accuracy should drop significantly (if these heads are necessary), and there should be an increase in incorrect S predictions. If Name-Mover Heads start attending more to S2 when S-Inhibition Heads are ablated, this would provide strong evidence that S-Inhibition Heads causally suppress subject attention.",
+    "reference": "Section 6 (Next Steps) - Potential Extensions point 1 (Ablation Studies) and the hypothesis about S-Inhibition function in Section 1"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "Which attention head has the highest average attention score to its hypothesized target position?",
+    "choices": [
+      "A) a3.h0 (Duplicate Token Head) with 0.72 attention from S2 to S1",
+      "B) a8.h6 (S-Inhibition Head) with 0.74 attention from END to S2",
+      "C) a9.h9 (Name-Mover Head) with 0.80 attention from END to IO",
+      "D) All heads have approximately equal attention scores"
+    ],
+    "answer": "C) a9.h9 (Name-Mover Head) with 0.80 attention from END to IO",
+    "reference": "Section 3.3 (Analysis Pipeline) Step 2 - Name-Mover Heads subsection lists a9.h9 with 0.7998 (\u22480.80) as the top head"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The documentation mentions 'Backup Pathways' as an alternative hypothesis to explore. Propose a concrete experiment to test whether backup pathways exist in the IOI circuit. What would constitute evidence for backup pathways?",
+    "choices": null,
+    "answer": "Experiment: Perform progressive ablation of Name-Mover Heads in order of their attention strength (starting with a9.h9, then a10.h7, etc.). After each ablation, measure task accuracy. Evidence for backup pathways would include: (1) Graceful degradation - accuracy decreases gradually rather than catastrophically when ablating individual heads, (2) Attention pattern shifts - when top Name-Mover Heads are ablated, other heads (not originally classified as Name-Movers) begin showing increased END\u2192IO attention, (3) Maintained above-chance performance - even after ablating the top 3-5 Name-Mover Heads, the model still performs significantly better than random guessing (>50%), (4) Recovery through alternative routes - analysis shows information flow through different layers or MLPs when primary heads are removed. The presence of 15 Name-Mover Heads (redundancy) already suggests backup pathways may exist.",
+    "reference": "Section 6 (Next Steps) - Alternative Hypotheses point 2 (Backup Pathways), and Section 5 (Analysis) - Key Observations point 4 about redundancy"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What is the purpose of using TransformerLens for this analysis?",
+    "choices": [
+      "A) It provides better model accuracy than standard implementations",
+      "B) It enables activation caching and easy access to internal model states",
+      "C) It reduces computational requirements for running GPT2",
+      "D) It automatically identifies circuits without manual analysis"
+    ],
+    "answer": "B) It enables activation caching and easy access to internal model states",
+    "reference": "Section 3.1 (Model Configuration) mentions using TransformerLens, and the code walkthrough would explain its utility for mechanistic interpretability through activation access"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The analysis used only 100 examples from a dataset of 10,000. What are two potential limitations of this choice, and what could be done to address them?",
+    "choices": null,
+    "answer": "Limitation 1: Statistical reliability - With only 100 examples, attention pattern averages might not be representative of the full distribution. Some heads might show high attention by chance on this small sample. Solution: Analyze the full 10,000 examples or use statistical significance testing to validate findings. Limitation 2: Pattern variability - Different sentence structures or name tokenizations in the unused 9,900 examples might reveal additional important heads or different attention patterns. Solution: Analyze performance across different subsets and validate that identified heads are consistent across diverse examples. The documentation acknowledges this by suggesting 'Larger Sample Analysis' as a next step.",
+    "reference": "Section 2 (Data) - Size: 10,000 examples (100 used for analysis), and Section 6 (Next Steps) - Potential Extensions point 2 (Larger Sample Analysis)"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The documentation states that top attention heads show 'very strong attention patterns (>0.7)' to their targets. Why is high attention selectivity evidence for 'specialized functionality' rather than just random correlation?",
+    "choices": null,
+    "answer": "High attention selectivity (>0.7) is evidence for specialized functionality because: (1) These heads consistently attend to specific positions across different examples with varying sentence structures and names, showing they respond to the abstract pattern (e.g., 'second mention of subject') rather than surface features, (2) The attention is concentrated on functionally relevant positions (S1, S2, IO) rather than distributed randomly, suggesting the heads have learned task-relevant features, (3) Different head types show high attention to different position pairs, indicating functional differentiation rather than general attention, (4) The high values mean these heads are dedicating most of their attention capacity to these specific positions, implying this is their primary computational role. Random correlation would show more variable, lower, and less position-specific attention scores.",
+    "reference": "Section 5 (Analysis) - Key Observations point 2: 'High Selectivity: Top heads show very strong attention patterns (>0.7) to their hypothesized targets, indicating specialized functionality'"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "Why did the researchers include all 12 MLPs in the circuit rather than selecting only the most relevant ones?",
+    "choices": [
+      "A) MLPs don't contribute meaningfully to the circuit, so their inclusion doesn't matter",
+      "B) The documentation doesn't explain this choice",
+      "C) Including all MLPs ensures comprehensive feature extraction and transformation while still fitting within the budget",
+      "D) MLPs were included by mistake"
+    ],
+    "answer": "C) Including all MLPs ensures comprehensive feature extraction and transformation while still fitting within the budget",
+    "reference": "Section 3.3 (Analysis Pipeline) Step 3 - Circuit Node Selection: 'Included all 12 MLPs for feature extraction and transformation' and Section 5 (Analysis) mentions this as part of 'Efficient Budget Usage'"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Consider this scenario: You ablate all Duplicate Token Heads but the model's accuracy remains at 93%. What would this result suggest about the role of Duplicate Token Heads in the circuit? Provide two possible interpretations.",
+    "choices": null,
+    "answer": "Interpretation 1: Duplicate Token Heads may not be causally necessary for IOI performance. The circuit might rely more heavily on S-Inhibition and Name-Mover Heads, with positional information available through other means (e.g., positional embeddings, or MLPs processing position features). Interpretation 2: Backup pathways exist - other heads or MLPs compensate for the ablated Duplicate Token Heads by detecting the duplicate token pattern through alternative mechanisms. This would align with the 'Backup Pathways' hypothesis mentioned in Next Steps. Both interpretations highlight the difference between correlation (high attention patterns) and causation (necessary for task performance), which is why the documentation suggests ablation studies and activation patching as critical next steps to establish causal roles.",
+    "reference": "Section 6 (Next Steps) - points 1 (Ablation Studies) and point 2 under Alternative Hypotheses (Backup Pathways)"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The documentation suggests testing if identified heads 'generalize to other name-based tasks'. Describe a specific different task where you might expect the same Name-Mover Heads to be useful, and explain why.",
+    "choices": null,
+    "answer": "A suitable task would be 'Direct Object Identification' - predicting who receives an action in sentences like 'The teacher praised ___ and reprimanded John' (answer: Mary, if mentioned earlier). The same Name-Mover Heads might be useful because: (1) The core mechanism (attending to a specific name and copying it to the output) is similar, (2) The task requires distinguishing between two names and selecting the contextually appropriate one, (3) It involves similar positional reasoning about which name is the target of an action. However, you might need different S-Inhibition patterns since the logic of what to suppress differs. Testing this would involve measuring whether heads like a9.h9 and a10.h7 show high attention from the prediction position to the correct name in this new task.",
+    "reference": "Section 6 (Next Steps) - Potential Extensions point 4: 'Cross-Dataset Validation: Test if identified heads generalize to other name-based tasks'"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "The circuit selection strategy involved 'adding 21 additional high-scoring heads to maximize circuit expressiveness'. What potential problem does this approach have?",
+    "choices": [
+      "A) It might include heads that don't contribute causally to IOI performance",
+      "B) It violates the budget constraint",
+      "C) It doesn't include enough MLPs",
+      "D) It focuses too much on early layers"
+    ],
+    "answer": "A) It might include heads that don't contribute causally to IOI performance",
+    "reference": "Section 3.3 Step 3 describes adding heads to 'maximize circuit expressiveness' and achieve budget utilization, but Section 6 (Next Steps) emphasizes the need for ablation studies and 'Circuit Refinement: Use causal intervention to identify minimal sufficient circuit', suggesting the current circuit may include non-causal components"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Propose how 'Activation Patching' (mentioned in Next Steps) could be used to validate the hypothesis that a3.h0 is a Duplicate Token Head. Describe the patching procedure and the expected result if the hypothesis is correct.",
+    "choices": null,
+    "answer": "Activation Patching procedure: (1) Run the model on an IOI example and cache the activation of a3.h0, (2) Run the model on a 'counterfactual' example where the subject does NOT repeat (e.g., 'As Carl and Maria left...'), (3) During this second run, replace ('patch') the activation of a3.h0 with the cached activation from the original IOI example, (4) Measure whether this causes the model's behavior to change - specifically, does it make the model treat the non-repeated name as if it were repeated? Expected result if hypothesis is correct: The patched activation should cause downstream components (S-Inhibition Heads and Name-Mover Heads) to behave as if there IS a duplicate token, potentially causing the model to show IOI-like attention patterns even in the non-IOI sentence. This would demonstrate that a3.h0 causally contributes duplicate-token information to the circuit.",
+    "reference": "Section 6 (Next Steps) - Potential Extensions point 3: 'Activation Patching: Directly test causal role of each component' and the overall hypothesis about Duplicate Token Heads in Section 1"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "According to the metadata structure, which of the following is NOT a field in each IOI example?",
+    "choices": [
+      "A) subject (S)",
+      "B) indirect_object (IO)",
+      "C) verb (the action performed)",
+      "D) place (the location)"
+    ],
+    "answer": "C) verb (the action performed)",
+    "reference": "Section 2 (Data) - Metadata Structure lists: subject (S), indirect_object (IO), object, and place. Verb is not mentioned as a metadata field."
+  }
+]
