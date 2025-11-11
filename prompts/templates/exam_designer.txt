@@ -66,7 +66,7 @@ Your exam should balance factual recall and applied reasoning, ensuring that que
 * **Creative Synthesis** — propose new questions, variants, or circuits inspired by the documented work.
 
 You may use **multiple-choice**, **free-generation**, or **structured explanation** formats.
-Questions must require comprehension, reasoning, or synthesis — not trivial text lookup.
+Questions must require comprehension, reasoning, or synthesis — not trivial text lookup. No need to test on budgets.
 
 ---
 
