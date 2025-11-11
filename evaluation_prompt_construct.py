@@ -24,8 +24,8 @@ def fill_evaluation_prompts(repo_path, task_name, system_prompt_path=None, repli
         "grader.txt"
     ]
 
-    if skip_replication:
-        evaluation_prompts.remove("replicator_evaluator.txt")
+    if not skip_replication:
+        evaluation_prompts.append("replicator_evaluator.txt")
 
     print(f"Filling prompts with REPO_PATH: {repo_path}\n")
 

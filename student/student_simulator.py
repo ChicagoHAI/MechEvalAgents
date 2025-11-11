@@ -18,6 +18,7 @@ report_path = args.report_path
 question_path = args.question_path
 model_id = args.model_id
 
+openai.api_key = "YOUR API KEY"
 
 with open(report_path, "r", encoding="utf-8") as f:
     report = f.read()
