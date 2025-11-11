@@ -51,7 +51,7 @@ If you encounter unclear notes, inconsistencies, or errors:
 
 **Score Formula:** `Replication Score = mean(A–E)`
 
-### OUTPUT SUMMARY (Please strictly follow my naming and you should output in a evaluation/ dir under the REPO given to you.)
+### OUTPUT SUMMARY (Please strictly follow my naming and you should output in a evaluation/replication dir under the REPO given to you.)
 
 * `replication.ipynb`
 * `documentation_replication.md`
