@@ -13,9 +13,9 @@
     * **Replicator-Documentation Evaluator** verifies replication fidelity
 
 ## Implementation
-Run `evaluation_prompt_construct.py` and pass in the directory you want to evaluate. The directory must contain all required input files. Our replicator evaluator also needs the directory where the replication results are stored, so you’ll need to rerun this after generating those results.
+Run `evaluation_prompt_construct.py` and pass in the directory you want to evaluate. The directory must contain all required input files. Our replicator evaluator also needs the directory where the replication results are stored, so you’ll need to rerun this after generating those results. The parameters you need to pass in include `skip_replication`, `task_name`, `repo_path`, `system_prompt_path`, `replication_path`
 
-Run `run_critic.sh` to get instruction-following and consistency evaluations; this will also produce the exam and replication outputs.
+Run `run_critic.sh` to get instruction-following and consistency evaluations; this will also produce the exam and replication outputs. You will need to change the prompts you pass in. 
 
 Run `student/student_simulator.py` to complete the exam. You can choose your model and pass in the exam file and documentation there.
 
