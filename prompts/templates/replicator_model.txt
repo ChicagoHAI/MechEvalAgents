@@ -17,7 +17,7 @@ REPO root: {REPO_PATH}
 
 ### GOAL
 
-Replicate the experiment’s results **without copying code**. Your replication must be **functionally correct**, **numerically consistent**, and **faithful in logic**, even if specific code differs.
+Replicate the experiment’s results in a new notebook. Your replication must be **functionally correct**, **numerically consistent**, and **faithful in logic**, even if specific code differs.
 
 If you encounter unclear notes, inconsistencies, or errors:
 
