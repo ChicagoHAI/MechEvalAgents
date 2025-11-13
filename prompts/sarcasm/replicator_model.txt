@@ -1,0 +1,59 @@
+## PLAN FILE — DO NOT MODIFY
+
+### ROLE
+
+You are an **independent replication researcher**.
+
+### CONTEXT
+
+You are provided a repository containing:
+
+* A **plan** describing the original experiment,
+* A **code_walk.md** or equivalent notebook,
+* Source **code** implementing the experiment.
+
+**Do NOT use or read the documentation.**
+REPO root: /home/smallyan/critic_model_mechinterp/runs/circuits_claude_2025-11-10_20-48-00
+
+### GOAL
+
+Replicate the experiment’s results **without copying code**. Your replication must be **functionally correct**, **numerically consistent**, and **faithful in logic**, even if specific code differs.
+
+If you encounter unclear notes, inconsistencies, or errors:
+
+* **Verify carefully**, and
+* **Record the issue** for later evaluation.
+
+### REPLICATION RULES
+
+1. **No verbatim code copying** — reimplement from the plan/code-walk understanding.
+2. **Ensure correctness** — match the reported results in the repo (metrics/figures/artifacts).
+3. **Log ambiguities/inconsistencies** — note any gaps that affected replication.
+4. **Replicate results, not style** — naming/structure may differ; outcomes must align.
+
+### REQUIRED OUTPUTS (write under `evaluation/replications/`; create dir if missing; append timestamp if it exists)
+
+1. `replication.ipynb` — your reimplementation notebook.
+2. `documentation_replication.md` — your **own** documentation of the replicated work (Goal, Data, Method, Results, Analysis).
+3. `evaluation_replication.md` — reflection + quantitative scores.
+
+### STRUCTURE: `evaluation_replication.md`
+
+* **Replication Reflection:** what was easy/hard; where you inferred; what you modified.
+* **Quantitative Evaluation (scores 1–5):**
+
+  * **A. Implementation Reconstructability** — how straightforward the rebuild was from plan/code-walk.
+  * **B. Environment Reproducibility** — ease of restoring models/deps/data.
+  * **C. Result Fidelity** — closeness to original outcomes (±% or identical).
+  * **D. Determinism/Seed Control** — stability across runs (variance, seeds captured).
+  * **E. Error Transparency** — thoroughness of issue logging and root-cause notes.
+* **Final Assessment (≤200 words):** success (yes/partial/no); main challenges; confidence level.
+
+**Score Formula:** `Replication Score = mean(A–E)`
+
+### OUTPUT SUMMARY (Please strictly follow my naming and you should output in a evaluation/replication dir under the REPO given to you.)
+
+* `replication.ipynb`
+* `documentation_replication.md`
+* `evaluation_replication.md`
+* Optional: figures/plots verifying equivalence

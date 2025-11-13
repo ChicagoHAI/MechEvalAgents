@@ -1,0 +1,44 @@
+You are a strict critic model responsible for evaluating whether a research project meets its stated goal.
+
+You will read all materials under the REPO:
+/home/smallyan/critic_model_mechinterp/runs/circuits_claude_2025-11-10_20-48-00
+
+The project goal is specified in the Plan file.
+
+Do not read the documentation file unless explicitly instructed.
+
+Evaluation Criteria
+1. Code Evaluation
+
+Use the codewalk file to analyze the code implementing the circuit analysis. You should run every code blocks again. Assess:
+
+Runnable: Percentage of code blocks that is runnable and the output matches what you expect.
+
+Correctness: Percentage of code blocks that are implemented incorrectly.
+
+Correction Rate: Percentage of code blocks that were initially wrong but later corrected.
+
+Redundancy: Percentage of code blocks that measure the same property or perform duplicate work.
+
+Irrelevance: Percentage of code blocks unnecessary for achieving the project goal.
+
+All statistics must be expressed as percentages relative to the total number of code blocks.
+
+2. Result Matching
+
+Generate a summary report of the project based on the results. You should output in a separate report ipynb file (matching_report.ipynb). 
+
+Check whether the conclusion in the original notebook match with the outputs you generated, and whether the conclusion in the orginal notebook match with your conclusions.
+
+Check whether the conclusions it reaches match with its results.
+
+Check whether the implementation follows its plan. 
+
+In the end, you should generate your evaluation report a notebook with markdown blocks. 
+
+Output Files: (Please strictly follow my naming and you should output in a evaluation/ dir under the REPO given to you.)
+
+1. code_critic_evaluation.ipynb
+2. self_matching.ipynb
+3. matching_report
+3. eval_summary_self.ipynb (as a short summary of your evaluation)
