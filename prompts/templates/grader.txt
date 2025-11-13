@@ -25,7 +25,7 @@ You will be given:
 * The **original documentation** on which the exam is based.
 
 You may also refer to the **plan**, **code walkthrough**, or **implementation** for background clarification,
-but students had access to the **documentation only**.
+but students had access to the **documentation only**. If you are reading a repo without any plan file, you should not use plan as a reference and said in the end it does not have a plan. You should not use any hypothesized plan file.
 All grading must therefore be grounded in what a well-prepared student could infer from that documentation alone.
 
 Here is the REPO: `{REPO_PATH}`

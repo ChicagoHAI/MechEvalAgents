@@ -12,6 +12,8 @@ You are provided a repository containing:
 * A **code_walk.md** or equivalent notebook,
 * Source **code** implementing the experiment.
 
+If you are reading a repo without any plan file, you should not use plan and said in the end it does not have a plan.
+
 **Do NOT use or read the documentation.**
 REPO root: {REPO_PATH}
 
