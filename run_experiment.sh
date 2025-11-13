@@ -9,11 +9,13 @@ set -euo pipefail
 CIRCUIT_PROMPTS=("prompts/l2/circuit_prompt_ioi.txt")
 PROVIDERS="claude"  # Default to claude only
 CONCURRENT_LIMIT=3  # Default concurrent sessions
+PUSH_TO_BRANCH=false  # Default: don't push to git
 HELP_MESSAGE="Usage: $0 [OPTIONS]
 Options:
   --prompts PROMPTS        Comma-separated list of prompt files [default: prompts/l2/circuit_prompt_ioi.txt]
   --providers PROVIDERS    Comma-separated list of providers (claude,gemini,codex) [default: claude]
   --concurrent LIMIT       Max concurrent sessions per provider [default: 3]
+  --push                   Create a git branch and push results [default: false]
   --help                   Show this help message
 
 Examples:
@@ -21,6 +23,7 @@ Examples:
   $0 --providers claude,gemini                                # Run with multiple providers
   $0 --prompts prompts/task1.txt,prompts/task2.txt            # Run with multiple prompts
   $0 --prompts prompts/task1.txt --providers claude,gemini    # Combine options
+  $0 --push                                                   # Push results to new git branch
   $0 --providers gemini --concurrent 2                        # Run with gemini, max 2 concurrent"
 
 # Parse command line arguments
@@ -37,6 +40,10 @@ while [[ $# -gt 0 ]]; do
         --concurrent)
             CONCURRENT_LIMIT="$2"
             shift 2
+            ;;
+        --push)
+            PUSH_TO_BRANCH=true
+            shift
             ;;
         --help)
             echo "$HELP_MESSAGE"
@@ -280,8 +287,35 @@ echo "  📔 Notebooks: $RUN_DIR/notebooks/"
 echo "  📊 Results: $RUN_DIR/results/"
 
 ###############################################################################
-# 6) make github PR request
+# 6) Push to git branch if requested
 ###############################################################################
-echo "▶ Making github PR request..."
-# cat "prompts/github_prompt.txt" | scribe claude > "$RUN_DIR/logs/github_pr.log" 2>&1
-#move the ipynb files to the notebooks directory
+if [[ "$PUSH_TO_BRANCH" == "true" ]]; then
+    echo "▶ Creating git branch and pushing results..."
+
+    # Create a unique branch name with timestamp
+    BRANCH_NAME="experiment-results-${RUN_TIMESTAMP}"
+
+    # Check if we're in a git repo
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        # Create and checkout new branch
+        git checkout -b "$BRANCH_NAME"
+
+        # Add the results
+        git add "$RUN_DIR"
+
+        # Commit the changes
+        git commit -m "Add experiment results from ${RUN_TIMESTAMP}
+
+Providers: ${PROVIDERS}
+Tasks completed: ${total_tasks}
+Results directory: ${RUN_DIR}
+"
+
+        # Push to remote
+        git push -u origin "$BRANCH_NAME"
+
+        echo "✔ Results pushed to branch: $BRANCH_NAME"
+    else
+        echo "⚠ Not a git repository. Skipping git push."
+    fi
+fi

@@ -25,6 +25,13 @@ Both scripts accept the following arguments:
 - `--prompts`: Comma-separated list of prompt files to execute
 - `--providers`: Comma-separated list of providers (e.g., `claude,gemini,codex`) [default: `claude`]
 - `--concurrent`: Max concurrent sessions per provider [default: `3`]
+- `--push`: Create a git branch and push results to remote [default: `false`]
+
+**Example with push:**
+```bash
+./run_experiment.sh --prompts prompts/task/circuit_prompt.txt --push
+# This will create a branch named "experiment-results-YYYY-MM-DD_HH-MM-SS" and push the results
+```
 
 ### Step 1: Run Initial Experiments
 

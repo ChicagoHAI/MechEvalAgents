@@ -22,7 +22,7 @@ Redundancy: Percentage of code blocks that measure the same property or perform 
 
 Irrelevance: Percentage of code blocks unnecessary for achieving the project goal.
 
-All statistics must be expressed as percentages relative to the total number of code blocks.
+All statistics must be expressed as percentages relative to the total number of code blocks. If the code you receive is not in jupyter notebook, please evaluate this based on the percentage of functions. 
 
 2. Result Matching
 
