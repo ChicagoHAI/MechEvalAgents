@@ -109,7 +109,11 @@ Write **all** outputs under `{REPO_PATH}/exam/` (create the directory if missing
    * JSON array of all questions using the schema above.
    * Include `"requires_code"` and `"code_id"` for code questions.
 
-3. **`exam_code_questions.txt`** *(new, required)*
+3.**`exam_{{task_name}}_student_version.json`**
+   * JSON array of all questions using the schema above except answer and reference
+   * do not include answer and refernce
+
+4. **`exam_code_questions.txt`** *(new, required)*
 
    * Plain text index **listing only the code questions**, one block per code question with this exact structure:
 
@@ -124,7 +128,7 @@ Write **all** outputs under `{REPO_PATH}/exam/` (create the directory if missing
 
    * Repeat the block for CQ2, CQ3, etc.
 
-4. **`exam_code_solutions.ipynb`** *(new, required)*
+5. **`exam_code_solutions.ipynb`** *(new, required)*
 
    * Contains **only the code questions**, each with:
 

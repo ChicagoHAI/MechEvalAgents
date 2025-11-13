@@ -24,8 +24,11 @@ def fill_evaluation_prompts(repo_path, task_name, system_prompt_path=None, repli
         "grader.txt"
     ]
 
-    if not skip_replication:
-        evaluation_prompts.append("replicator_evaluator.txt")
+    if skip_replication:
+        evaluation_prompts = ["replicator_evaluator.txt"]
+    
+    if student:
+        evaluation_prompts = ["student.txt"]
 
     print(f"Filling prompts with REPO_PATH: {repo_path}\n")
 
@@ -44,6 +47,10 @@ def fill_evaluation_prompts(repo_path, task_name, system_prompt_path=None, repli
 
         if prompt_file == "replicator_evaluator.txt":
             replacements["REPLICATION_PATH"] = replication_path or ""
+
+        if prompt_file == "student.txt":
+            replacements["EXAM_PATH"] = exam_path or ""
+            replacements["DOCUMENTATION_PATH"] = documentation_path or ""
         
         filled = text.format(**replacements)
 
@@ -58,11 +65,17 @@ def fill_evaluation_prompts(repo_path, task_name, system_prompt_path=None, repli
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--skip_replication", type=bool, default=True)
+    parser.add_argument("--replication", type=bool, default=False)
     parser.add_argument("--task_name", type=str, default="ioi_l2")
     parser.add_argument("--repo_path", type=str, default="YOUR REPO")
     parser.add_argument("--system_prompt_path", type=str, default="YOUR SYSTEM PROMPT")
     parser.add_argument("--replication_path", type=str, default="YOUR REPLICATION PATH")
+
+    parser.add_argument("--student", type=bool, default=False)
+    parser.add_argument("--exam_path", type=str, default="YOUR EXAM PATH")
+    parser.add_argument("--documentation_path", type=str, default="YOUR DOCUMENTATION PATH")
+
+
     args = parser.parse_args()
     skip_replication = args.skip_replication
     task_name = args.task_name

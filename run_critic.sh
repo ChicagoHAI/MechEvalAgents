@@ -4,23 +4,33 @@ set -euo pipefail
 # ───────────────────────────────────────────────
 # 0) Parse command line arguments and set defaults
 # ───────────────────────────────────────────────
+
+# Define the prompts (defaults)
+CIRCUIT_PROMPTS=("prompts/ioi_l2/consistency_evaluation.txt" "prompts/ioi_l2/instruction_following.txt" "prompts/ioi_l2/exam_designer.txt" "prompts/ioi_l2/replicator_model.txt")
+
 PROVIDERS="claude"  # Default to claude only
 CONCURRENT_LIMIT=3  # Default concurrent sessions
 HELP_MESSAGE="Usage: $0 [OPTIONS]
 Options:
+  --prompts PROMPTS        Comma-separated list of prompt files [default: 4 evaluation prompts]
   --providers PROVIDERS    Comma-separated list of providers (claude,gemini,codex) [default: claude]
-  --concurrent LIMIT       Max concurrent sessions per provider [default: 3]  
+  --concurrent LIMIT       Max concurrent sessions per provider [default: 3]
   --help                   Show this help message
 
 Examples:
-  $0                                    # Run with claude only
-  $0 --providers claude,gemini          # Run with claude and gemini
-  $0 --providers claude,gemini,codex    # Run with all providers
-  $0 --providers gemini --concurrent 2  # Run with gemini, max 2 concurrent"
+  $0                                                          # Run with defaults
+  $0 --providers claude,gemini                                # Run with multiple providers
+  $0 --prompts prompts/task/eval1.txt,prompts/task/eval2.txt  # Run with custom prompts
+  $0 --prompts prompts/task/eval1.txt --providers claude      # Combine options
+  $0 --providers gemini --concurrent 2                        # Run with gemini, max 2 concurrent"
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
+        --prompts)
+            IFS=',' read -ra CIRCUIT_PROMPTS <<< "$2"
+            shift 2
+            ;;
         --providers)
             PROVIDERS="$2"
             shift 2
@@ -89,10 +99,6 @@ touch "/tmp/scribe_run_start_${RUN_TIMESTAMP}"
 
 # Export run directory for child processes to use
 export SCRIBE_BENCHMARK_RUN_DIR="$RUN_DIR"
-
-# Define circuit prompts
-#TODO: pass in the prompts.
-CIRCUIT_PROMPTS=("prompts/ioi_l2/consistency_evaluation.txt" "prompts/ioi_l2/instruction_following.txt" "prompts/ioi_l2/exam_designer.txt" "prompts/ioi_l2/replicator_model.txt")
 
 ###############################################################################
 # 4) Run circuit tasks with port rotation

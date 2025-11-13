@@ -13,13 +13,111 @@
     * **Replicator-Documentation Evaluator** verifies replication fidelity
 
 ## Implementation
-Run `evaluation_prompt_construct.py` and pass in the directory you want to evaluate. The directory must contain all required input files. Our replicator evaluator also needs the directory where the replication results are stored, so you’ll need to rerun this after generating those results. The parameters you need to pass in include `skip_replication`, `task_name`, `repo_path`, `system_prompt_path`, `replication_path`
 
-Run `run_critic.sh` to get instruction-following and consistency evaluations; this will also produce the exam and replication outputs. You will need to change the prompts you pass in. 
+The pipeline uses two main scripts:
+- **`run_experiment.sh`** - For running initial experiments
+- **`run_critic.sh`** - For running all evaluations, exams, replications, and grading
 
-Run `student/student_simulator.py` to complete the exam. You can choose your model and pass in the exam file and documentation there.
+### Common Options
 
-Finally, run `run_replicatoreval_grader.sh` to evaluate the replication results and the student’s answers.
+Both scripts accept the following arguments:
+
+- `--prompts`: Comma-separated list of prompt files to execute
+- `--providers`: Comma-separated list of providers (e.g., `claude,gemini,codex`) [default: `claude`]
+- `--concurrent`: Max concurrent sessions per provider [default: `3`]
+
+### Step 1: Run Initial Experiments
+
+Execute experiments with your circuit analysis tasks using `run_experiment.sh`:
+
+```bash
+./run_experiment.sh --prompts prompts/<task_name>/circuit_prompt.txt
+```
+
+This generates the initial experimental results in a timestamped directory under `runs/`.
+
+### Step 2: Construct Evaluation Prompts
+
+Generate evaluation prompts using the output repository from Step 1:
+
+```bash
+python evaluation_prompt_construct.py \
+  --task_name <task_name> \
+  --repo_path <path_to_experiment_output> \
+  --system_prompt_path <path_to_system_prompt>
+```
+
+This creates filled prompt templates in `prompts/<task_name>/` for the evaluators.
+
+### Step 3: Run Critic Evaluations
+
+Use `run_critic.sh` to run consistency evaluation, instruction following, exam design, and replication:
+
+```bash
+./run_critic.sh --prompts prompts/<task_name>/consistency_evaluation.txt,prompts/<task_name>/instruction_following.txt,prompts/<task_name>/exam_designer.txt,prompts/<task_name>/replicator_model.txt
+```
+
+**Important: Instruction Following Variants**
+
+Choose the appropriate instruction following prompt based on your task:
+- **`instruction_following.txt`** - Use when evaluating if the model **tests existing hypotheses**
+- **`instruction_following_l3.txt`** - Use when evaluating if the model **comes up with and refines new hypotheses**
+
+This step generates:
+- Consistency evaluation results (`evaluation/`)
+- Instruction following evaluation (`evaluation/`)
+- Exam files for testing understanding (`exam/`)
+- Replication attempts (`evaluations/replications/`)
+
+### Step 4: Construct Student and Replicator Evaluator Prompts
+
+After replication results are generated, create prompts for student evaluation and replicator grading:
+
+```bash
+# For replicator evaluator prompt
+python evaluation_prompt_construct.py \
+  --skip_replication True \
+  --task_name <task_name> \
+  --repo_path <path_to_experiment_output> \
+  --replication_path <path_to_replication_output>
+
+# For student prompt
+python evaluation_prompt_construct.py \
+  --student True \
+  --task_name <task_name> \
+  --exam_path <path_to_exam_file> \
+  --documentation_path <path_to_documentation>
+```
+
+### Step 5: Run Student Evaluation
+
+Use `run_critic.sh` to have coding agents complete the exam:
+
+```bash
+./run_critic.sh --prompts prompts/<task_name>/student.txt
+```
+
+**Alternative: General Models** (non-coding agents)
+
+For general models, use the student simulator:
+```bash
+python student/student_simulator.py \
+  --model <model_name> \
+  --exam_file <path_to_exam> \
+  --documentation <path_to_docs>
+```
+
+### Step 6: Grade and Evaluate Replicator
+
+Use `run_critic.sh` for final grading and replicator evaluation:
+
+```bash
+./run_critic.sh --prompts prompts/<task_name>/replicator_evaluator.txt,prompts/<task_name>/grader.txt
+```
+
+This evaluates:
+- Student exam answers using the Exam Grader (`exam/grade/`)
+- Replication fidelity using the Replicator-Documentation Evaluator (`evaluations/replication/`)
 
 ## Evaluation Processes and Output Files
 
@@ -33,41 +131,8 @@ Each research project requires four types of files:
 
 **Note:** We recommend using Jupyter notebooks for implementation to enable better quantitative analysis by the Consistency Evaluator. 
 
-### 1. Exam Designer (`exam_designer.txt`)
 
-**Purpose:** Creates comprehensive assessments from research documentation to test understanding of documented facts and ability to apply concepts.
-
-**Input**: plan + implementaiton code + code walkthrough + documentation
-
-**Output Directory:** `exam/`
-
-**Output Files:**
-- `exam_documentation.ipynb` - Notebook containing generated questions and gold answers
-- `exam_{task_name}.json` - Structured exam data in JSON format
-  - Contains: question type (multiple-choice or free-generation), question text, correct answer, choices (if applicable), and reference to documentation section
-
----
-
-### 2. Exam Grader (`grader.txt`)
-
-**Purpose:** Evaluates student answers to exams, checking both correctness and whether answers rely only on provided documentation.
-
-**Input**: exam + student's answers + documentation
-
-**Output Directory:** `exam/grade/`
-
-**Output Files:**
-- `grading_results.json` - Per-question grading results with scores, feedback, and external reference detection
-  - Contains: question_id, question_type, question text, gold_answer, student_answer, score, feedback, reference, external_reference flag
-- `grading_summary.md` - Readable summary with:
-  - Quantitative performance metrics
-  - Qualitative analysis
-  - Overall score and grade level (Excellent/Good/Fair/Needs Improvement/Fail)
-  - Count of questions using external references
-
----
-
-### 3. Instruction Following Evaluator (`instruction_following.txt`)
+### 1. Instruction Following Evaluator (`instruction_following.txt`)
 
 **Purpose:** Evaluates whether student project aligns with instructor's goals and tests stated hypotheses.
 
@@ -82,7 +147,7 @@ Each research project requires four types of files:
 
 ---
 
-### 4. Consistency Evaluator (`consistency_evaluation.txt`)
+### 2. Consistency Evaluator (`consistency_evaluation.txt`)
 
 **Purpose:** Evaluates code correctness, checks result-conclusion consistency, and assesses plan adherence.
 
@@ -103,7 +168,7 @@ Each research project requires four types of files:
 
 ---
 
-### 5. Replicator Model (`replicator_model.txt`)
+### 3. Replicator Model (`replicator_model.txt`)
 
 **Purpose:** Independently replicates experiment results without copying original code.
 
@@ -125,7 +190,7 @@ Each research project requires four types of files:
 
 ---
 
-### 6. Replicator-Documentation Evaluator (`replicator_evaluator.txt`)
+### 3.a. Replicator-Documentation Evaluator (`replicator_evaluator.txt`)
 
 **Purpose:** Verifies that replicated results and conclusions match the original experiment.
 
@@ -143,6 +208,53 @@ Each research project requires four types of files:
     - Conclusion Consistency
     - External Reference Discipline
   - Final decision (Pass / Revise)
+
+### 4. Exam Designer (`exam_designer.txt`)
+
+**Purpose:** Creates comprehensive assessments from research documentation to test understanding of documented facts and ability to apply concepts.
+
+**Input**: plan + implementaiton code + code walkthrough + documentation
+
+**Output Directory:** `exam/`
+
+**Output Files:**
+- `exam_documentation.ipynb` - Notebook containing generated questions and gold answers
+- `exam_{task_name}.json` - Structured exam data in JSON format
+  - Contains: question type (multiple-choice or free-generation), question text, correct answer, choices (if applicable), and reference to documentation section
+
+---
+### 4.b. Student (`student.txt`)
+
+**Purpose:** take the test
+
+**Input**: documentation + exam
+
+**Output Directory:** `exam/`
+
+**Output Files:**
+- `student_answer.ipynb`: all the answers to the questions
+
+Note: You can also use `student_simulator.ipynb` to pass in non code-agent model by using your API key.
+---
+
+### 4.b. Exam Grader (`grader.txt`)
+
+**Purpose:** Evaluates student answers to exams, checking both correctness and whether answers rely only on provided documentation.
+
+**Input**: exam + student's answers + documentation
+
+**Output Directory:** `exam/grade/`
+
+**Output Files:**
+- `grading_results.json` - Per-question grading results with scores, feedback, and external reference detection
+  - Contains: question_id, question_type, question text, gold_answer, student_answer, score, feedback, reference, external_reference flag
+- `grading_summary.md` - Readable summary with:
+  - Quantitative performance metrics
+  - Qualitative analysis
+  - Overall score and grade level (Excellent/Good/Fair/Needs Improvement/Fail)
+  - Count of questions using external references
+
+---
 
 ## Notices
 The evaluations will be in the repo you want to evaluate. There will be another copied saved in another dir under runs. 
