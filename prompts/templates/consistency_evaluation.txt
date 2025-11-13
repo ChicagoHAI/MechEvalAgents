@@ -36,6 +36,8 @@ Check whether the implementation follows its plan.
 
 In the end, you should generate your evaluation report a notebook with markdown blocks. 
 
+If you are reading a repo without any plan file, you should skip the evaluation related to plan and said in the end it does not have a plan. You should not use any hypothesized plan file.
+
 Output Files: (Please strictly follow my naming and you should output in a evaluation/ dir under the REPO given to you.)
 
 1. code_critic_evaluation.ipynb
