@@ -1,0 +1,72 @@
+================================================================================
+ICoT REPLICATION: Linear Regression Probing
+================================================================================
+
+CUDA available: True
+GPU device: NVIDIA A100 80GB PCIe
+
+Successfully imported custom modules
+
+--------------------------------------------------------------------------------
+STEP 1: Loading Models
+--------------------------------------------------------------------------------
+Loading ICoT model...
+/home/smallyan/critic_model_mechinterp/icot/src/model_utils.py:106: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model.load_state_dict(torch.load(state_dict_path))
+ICoT model loaded successfully
+
+Loading SFT model...
+/home/smallyan/critic_model_mechinterp/icot/src/model_utils.py:129: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  state_dict = torch.load(model_path, map_location="cuda")
+Found auxiliary heads: []
+SFT model loaded successfully
+
+--------------------------------------------------------------------------------
+STEP 2: Loading and Preparing Data
+--------------------------------------------------------------------------------
+Loaded 1000 multiplication problems
+Example: 2365 × 4347 = 10280655
+
+Created 1000 prompts
+
+--------------------------------------------------------------------------------
+STEP 3: Computing Ground Truth Labels (c_hat values)
+--------------------------------------------------------------------------------
+Computed labels shape: torch.Size([1000, 8])
+
+--------------------------------------------------------------------------------
+STEP 4: Splitting Data (Train/Val)
+--------------------------------------------------------------------------------
+Training samples: 0
+Validation samples: 1000
+
+--------------------------------------------------------------------------------
+STEP 5: Recording Activations from Models
+--------------------------------------------------------------------------------
+Recording validation activations from ICoT model...
+Traceback (most recent call last):
+  File "/home/smallyan/critic_model_mechinterp/icot/evaluation/replications/run_replication.py", line 200, in <module>
+    _ = icot_model(val_tokens)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/smallyan/.conda/envs/meta/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/smallyan/.conda/envs/meta/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/smallyan/critic_model_mechinterp/icot/src/ImplicitModel.py", line 121, in forward
+    outputs = self.base_model.forward(
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/smallyan/.conda/envs/meta/lib/python3.11/site-packages/transformers/models/gpt2/modeling_gpt2.py", line 1271, in forward
+    transformer_outputs = self.transformer(
+                          ^^^^^^^^^^^^^^^^^
+  File "/home/smallyan/.conda/envs/meta/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/smallyan/.conda/envs/meta/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/smallyan/.conda/envs/meta/lib/python3.11/site-packages/transformers/models/gpt2/modeling_gpt2.py", line 1145, in forward
+    presents = presents + (outputs[1],)
+                           ~~~~~~~^^^
+IndexError: tuple index out of range
