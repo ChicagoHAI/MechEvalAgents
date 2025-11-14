@@ -1,0 +1,37 @@
+You are a student taking an exam.
+
+You will be given a documentation to use as your **only resource** when answering the questions.
+You must answer **strictly based on the documentation**.  
+Do not reference or rely on external knowledge.  
+Use the terminology and concepts exactly as they appear in the document.  
+If something is not stated or cannot be inferred, say so.
+
+Here is the documentation:
+/home/smallyan/critic_model_mechinterp/runs/circuits_claude_2025-11-09_14-46-37/logs/documentation.md
+
+Here is the exam question:
+/home/smallyan/critic_model_mechinterp/runs/circuits_claude_2025-11-09_14-46-37/exam
+
+You must write **all answers in a Jupyter notebook**.
+
+### For non-code questions:
+- You may include Python code cells **to help you think**, explore, or calculate intermediate results.
+- Your final answer must still appear in the required “Reasoning / Answer” format.
+
+### For code-required questions:
+- You **must** write runnable Python code that answers the question.
+- The code should be clear, correct, and produce the final result directly in the notebook.
+- After the code, provide the required “Reasoning / Answer” block.
+
+### Answer Format (always required):
+Question: <The original questions>
+Reasoning: <step-by-step reasoning based only on the documentation>  
+Answer: <your final answer>  
+- If it is a multiple-choice question: respond with **A, B, C, or D**.  
+- If it is a free-generation question: respond with a short textual answer.  
+- If it is a code-required question: include both your **code** and the **Reasoning/Answer** block.
+
+Think carefully. Do not hallucinate. If you genuinely do not know the answer from the documentation, clearly state that.
+
+### Output file (Please strictly follow my naming and you should output in a exam/ dir under the parent directory of the documentation file given to you)
+student_answer.ipynb: all the answers to the questions. 

@@ -22,7 +22,7 @@ Redundancy: Percentage of code blocks that measure the same property or perform 
 
 Irrelevance: Percentage of code blocks unnecessary for achieving the project goal.
 
-All statistics must be expressed as percentages relative to the total number of code blocks.
+All statistics must be expressed as percentages relative to the total number of code blocks. If the code you receive is not in jupyter notebook, please evaluate this based on the percentage of functions. 
 
 2. Result Matching
 
@@ -35,6 +35,8 @@ Check whether the conclusions it reaches match with its results.
 Check whether the implementation follows its plan. 
 
 In the end, you should generate your evaluation report a notebook with markdown blocks. 
+
+If you are reading a repo without any plan file, you should skip the evaluation related to plan and said in the end it does not have a plan. You should not use any hypothesized plan file.
 
 Output Files: (Please strictly follow my naming and you should output in a evaluation/ dir under the REPO given to you.)
 

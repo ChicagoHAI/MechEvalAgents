@@ -1,0 +1,11 @@
+{
+  "accuracy": 0.94,
+  "num_examples": 100,
+  "total_nodes": 44,
+  "num_heads": 31,
+  "num_mlps": 12,
+  "budget_total": 11200,
+  "top_duplicate": "a3.h0 (0.7191)",
+  "top_s_inhibition": "a8.h6 (0.7441)",
+  "top_name_mover": "a9.h9 (0.7998)"
+}
