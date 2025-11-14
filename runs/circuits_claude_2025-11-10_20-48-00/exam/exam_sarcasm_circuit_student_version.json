@@ -1,0 +1,135 @@
+[
+  {
+    "question_type": "multiple_choice",
+    "question": "What is the primary computational mechanism used by GPT2-small for sarcasm detection, according to the documented circuit?",
+    "choice": ["A) Attention-based information routing across sequence positions", "B) Late-layer sentiment polarity reversal", "C) Early-layer MLP-based incongruity detection", "D) Distributed gradient computation across all 12 layers"],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "Which component shows the most dominant differential activation in the sarcasm circuit, and what is its approximate differential activation value?",
+    "choice": ["A) a11.h8 (Layer 11, Head 8) with differential ~3.33", "B) m2 (Layer 2 MLP) with differential ~32.47", "C) m11 (Layer 11 MLP) with differential ~22.30", "D) a4.h11 (Layer 4, Head 11) with differential ~1.40"],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What is the total write budget utilized by the documented sarcasm circuit?",
+    "choice": ["A) 8,448 dimensions (75% of budget)", "B) 9,600 dimensions (86% of budget)", "C) 10,240 dimensions (91% of budget)", "D) 11,200 dimensions (100% of budget)"],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The documentation describes a three-stage hierarchical process for sarcasm detection. Describe each stage, identify the key components involved, and explain the computational function performed at each stage.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "Which two MLP layers were excluded from the circuit due to minimal differential activation?",
+    "choice": ["A) m0 and m1", "B) m3 and m4", "C) m5 and m6", "D) m10 and m11"],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Compare the sarcasm circuit to the Indirect Object Identification (IOI) circuit along four dimensions: primary mechanism, key layer, circuit size, and relative importance of attention vs. MLPs. What does this comparison suggest about linguistic task processing in transformers?",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What method was used to identify components causally important for sarcasm detection?",
+    "choice": ["A) Gradient-based attribution analysis", "B) Systematic ablation testing with behavioral metrics", "C) Differential activation analysis on paired examples", "D) Linear probing with supervised sarcasm classifiers"],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Explain the key linguistic features that distinguish sarcastic from literal sentences in the dataset. How might these features enable Layer 2 MLP to detect incongruity?",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "How many attention heads were included in the final circuit, and which layer contains the most important attention heads?",
+    "choice": ["A) 43 heads total, with the most important in Layer 11", "B) 101 heads total, with the most important in Layer 4", "C) 54 heads total, with the most important in Layer 2", "D) 19 heads total, with the most important in Layer 6"],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The original hypothesis predicted that middle layers (L4-L7) would be the primary detection site, but empirical evidence showed Layer 2 as the primary detector. Explain this discrepancy and what it reveals about the mechanistic difference between the predicted and actual sarcasm processing.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "In the differential activation analysis method, activations were averaged over which dimension to handle variable-length inputs?",
+    "choice": ["A) Batch dimension", "B) Sequence position dimension", "C) Model dimension (d_model)", "D) Head dimension (d_head)"],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The circuit uses 10 MLPs (7,680 dims) versus 43 attention heads (2,752 dims). Given the budget-constrained selection algorithm described in the documentation, explain why this distribution occurred and what it implies about the relative importance of MLPs vs. attention for sarcasm detection.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What is a key limitation of using differential activation (L2 norm of activation differences) as the selection criterion for circuit components?",
+    "choice": ["A) It cannot handle variable-length sequences", "B) It requires expensive gradient computation", "C) It only works for attention mechanisms, not MLPs", "D) High differential activation does not guarantee causal importance"],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Based on the documented circuit structure and the exclusion of m3 and m4, propose a hypothesis for why these specific middle layers might show minimal differential activation. What experiments would you conduct to test this hypothesis?",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "According to the documentation, what is the dimension of each attention head's output in GPT2-small?",
+    "choice": ["A) 768 dimensions", "B) 128 dimensions", "C) 64 dimensions", "D) 32 dimensions"],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The documentation mentions that the circuit hasn't been validated with ablation testing. Design a systematic ablation experiment to test the sufficiency and necessity of the identified circuit components. Your design should address both individual component importance and potential interaction effects.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "true_code",
+    "question": "Write code to verify the write budget calculation for the documented circuit. Given the circuit composition (1 input embedding, 10 MLPs, 43 attention heads) and the dimension specifications (d_model=768, d_head=64), compute the total write cost and verify it matches the documented 11,200 dimensions.",
+    "choice": [],
+    "requires_code": true,
+    "code_id": "CQ1"
+  },
+  {
+    "question_type": "true_code",
+    "question": "The documentation claims m2 is approximately 45% stronger than m11 in differential activation. Write code to verify this claim by computing the percentage difference between m2's differential (32.47) and m11's differential (22.30), and check if it's approximately 45%.",
+    "choice": [],
+    "requires_code": true,
+    "code_id": "CQ2"
+  },
+  {
+    "question_type": "true_code",
+    "question": "The circuit includes attention heads distributed across layers. Write code to verify the documented distribution: 9 heads in early layers (L0-L3), 19 heads in middle layers (L4-L7), and 15 heads in late layers (L8-L11). Parse the provided list of attention head components and compute the actual distribution to verify these claims.",
+    "choice": [],
+    "requires_code": true,
+    "code_id": "CQ3"
+  }
+]

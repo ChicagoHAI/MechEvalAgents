@@ -1,72 +1,96 @@
-# Replication Study Summary
+# Replication Summary
 
-**Date**: 2025-11-10
-**Replication Score**: 4.8/5.0 (96%)
-**Success Level**: Complete Success
+**Date**: 2025-11-13
+**Replicator**: Independent Researcher
+**Original Experiment**: Sarcasm Circuit Analysis (2025-11-10)
 
-## Files Created
+## Quick Results
 
-### Required Outputs
-1. **replication.ipynb** - Jupyter notebook with full reimplementation
-   - Located: `/evaluation/replication.ipynb`
-   - Contains: Model loading, dataset creation, activation analysis, circuit construction
+### Replication Score: 4.6/5 (92%)
 
-2. **documentation_replication.md** - Detailed documentation of replicated work
-   - Located: `/evaluation/documentation_replication.md`
-   - Sections: Goal, Data, Method, Results, Analysis, Limitations, Conclusions
+| Metric | Score |
+|--------|-------|
+| Implementation Reconstructability | 5/5 |
+| Environment Reproducibility | 5/5 |
+| Result Fidelity | 4/5 |
+| Determinism/Seed Control | 4/5 |
+| Error Transparency | 5/5 |
 
-3. **evaluation_replication.md** - Reflection and quantitative scores
-   - Located: `/evaluation/evaluation_replication.md`
-   - Contains: Replication reflection + 5 scored dimensions (A-E)
+### Circuit Fidelity: 94.4%
 
-### Supporting Files
-4. **replicated_circuit.json** - Circuit structure and metadata
-5. **comparison_metrics.json** - Quantitative comparison with original
+- **Component match**: 51/54 nodes (94.4%)
+- **MLP match**: 10/10 (100%)
+- **Attention head match**: 40/43 (93%)
+- **Key findings replicated**: ✓ m2 dominance, ✓ m11 second, ✓ Layer 11 heads
 
-## Key Results
+## Files Produced
 
-### Replication Scores (1-5)
-- **A. Implementation Reconstructability**: 5/5 (Perfect)
-- **B. Environment Reproducibility**: 5/5 (Perfect)
-- **C. Result Fidelity**: 5/5 (< 5% error)
-- **D. Determinism/Seed Control**: 4/5 (Good)
-- **E. Error Transparency**: 5/5 (Excellent)
+All files saved to: `/runs/circuits_claude_2025-11-10_20-48-00/evaluation/replication/`
 
-**Overall: 4.8/5.0 (96%)**
+1. **replication.ipynb** - Complete reimplementation notebook
+2. **documentation_replication.md** - Full documentation of replicated experiment
+3. **evaluation_replication.md** - Quantitative evaluation with scores and reflection
+4. **replicated_circuit.json** - Output circuit (54 components)
+5. **REPLICATION_SUMMARY.md** - This summary file
 
-### Validation Metrics
-| Finding | Original | Replicated | Error |
-|---------|----------|------------|-------|
-| MLP Layer 2 | 32.47 | 30.81 | 5.1% |
-| MLP Layer 11 | 22.30 | 22.85 | 2.5% |
-| Head a11.h8 | 3.33 | 3.32 | 0.2% |
-| Head a11.h0 | 2.74 | 2.81 | 2.5% |
+## Key Findings Replicated
 
-All key findings validated within scientific standards.
+### Numerical Results
 
-## Conclusions
+| Component | Original | Replicated | Error |
+|-----------|----------|------------|-------|
+| m2 differential | 32.47 | 31.51 | 2.9% |
+| m11 differential | 22.30 | 22.32 | 0.1% |
+| Top attention head | a11.h8 | a11.h8 | Match |
+| Second attention head | a11.h0 | a11.h0 | Match |
+| Total components | 54 | 54 | Match |
+| Write budget used | 11,200 | 11,200 | Match |
 
-### Strengths
-✓ Excellent documentation quality enabled complete reconstruction
-✓ All core scientific findings reproduced independently
-✓ Implementation from plan/code-walk alone (no code copying)
-✓ Numerical fidelity exceptional (< 5% on all metrics)
+### Mechanistic Insights
 
-### Challenges Overcome
-- Generated synthetic examples matching description
-- Inferred MLP selection threshold from results
-- Explained component count difference (43 vs 54)
-- Documented all ambiguities and resolutions
+✓ **Three-stage hierarchical model confirmed**:
+1. Early detection at Layer 2 (m2 dominance)
+2. Signal propagation through middle layers
+3. Final integration at Layer 11 (output heads)
 
-### Scientific Impact
-This replication **strongly validates** the original findings:
-1. Sarcasm detection uses three-stage hierarchical mechanism
-2. MLP Layer 2 is primary detector (confirmed independently)
-3. Layer 11 performs final integration (confirmed)
-4. Circuit discovery methodology is reproducible and robust
+✓ **MLP importance confirmed**: MLPs show 5-10x higher differential than attention heads
 
-The experiment represents excellent reproducibility practices for circuit analysis research.
+✓ **Layer 11 attention heads are output integrators**: a11.h8 and a11.h0 consistently strongest
+
+## Discrepancies
+
+### Minor Differences (3 attention heads, ranks 36-49)
+
+**Only in original**: a3.h6, a4.h3, a8.h2
+**Only in replicated**: a11.h10, a2.h9, a3.h7
+
+**Root cause**: Very close differential scores (0.79-0.87), likely due to:
+- Slight wording differences in reconstructed examples
+- Statistical variation
+- Floating-point precision
+
+**Impact**: Negligible - these are low-importance components with minimal differential
+
+## Conclusion
+
+**Replication: SUCCESSFUL**
+
+The core findings are robust and reproducible:
+- Circuit structure (54 components, budget allocation) exact match
+- Key mechanistic insights (m2 dominance, hierarchical processing) confirmed
+- Numerical results within 3% of original
+- Minor variations (6% of components) attributable to dataset reconstruction
+
+The work demonstrates **excellent reproducibility** with clear documentation enabling independent reconstruction.
+
+## Recommendations
+
+For future work in this repository:
+1. Include exact text examples in data files
+2. Add variance analysis across multiple runs
+3. Include ablation studies to validate causal importance
+4. Specify tie-breaking rules for equal-score components
 
 ---
 
-**Recommendation**: Accept as high-quality replication study. Minor improvements possible (provide exact examples), but current work exceeds typical scientific standards.
+**Overall Assessment**: High-quality, reproducible research that successfully identifies a plausible sarcasm detection circuit in GPT2-small.

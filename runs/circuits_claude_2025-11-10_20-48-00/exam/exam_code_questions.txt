@@ -1,0 +1,20 @@
+[code_id]: CQ1
+Title: Write Budget Verification
+Prompt: Write code to verify the write budget calculation for the documented circuit. Given the circuit composition (1 input embedding, 10 MLPs, 43 attention heads) and the dimension specifications (d_model=768, d_head=64), compute the total write cost and verify it matches the documented 11,200 dimensions.
+Expected_Outcome: The code should calculate total_write_cost = 768 + (10 * 768) + (43 * 64) = 768 + 7680 + 2752 = 11200. It should print that the calculated cost is 11200 and that it matches the documented budget (True).
+Reference: Section 4 (Results) - Circuit Composition; Section 3 (Method) - Write Budget Calculation
+---
+
+[code_id]: CQ2
+Title: Differential Activation Percentage Verification
+Prompt: The documentation claims m2 is approximately 45% stronger than m11 in differential activation. Write code to verify this claim by computing the percentage difference between m2's differential (32.47) and m11's differential (22.30), and check if it's approximately 45%.
+Expected_Outcome: The code should calculate percentage_stronger = ((32.47 - 22.30) / 22.30) * 100 ≈ 45.61%. It should verify this is within ±2% of the claimed 45%, printing the calculated percentage (≈45.61%) and that the claim is approximately correct (True). Tolerance check: abs(45.61 - 45.0) <= 2.0 should be True.
+Reference: Section 4 (Results) - 'Key Finding: m2 shows dramatically dominant differential activation (32.47), ~45% stronger than the next strongest MLP'
+---
+
+[code_id]: CQ3
+Title: Attention Head Distribution Verification
+Prompt: The circuit includes attention heads distributed across layers. Write code to verify the documented distribution: 9 heads in early layers (L0-L3), 19 heads in middle layers (L4-L7), and 15 heads in late layers (L8-L11). Parse the provided list of attention head components and compute the actual distribution to verify these claims.
+Expected_Outcome: The code should parse the 43 attention head components, extract layer numbers, and count: early_layers (L0-L3) = 9 heads, middle_layers (L4-L7) = 19 heads, late_layers (L8-L11) = 15 heads. It should print these counts and verify they match the documented distribution (True). Total should equal 43 heads.
+Reference: Section 4 (Results) - Attention Head Components: 'Distribution by Layer'
+---

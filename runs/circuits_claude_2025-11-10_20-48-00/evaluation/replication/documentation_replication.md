@@ -1,224 +1,235 @@
 # Sarcasm Circuit Analysis - Replication Documentation
 
-**Date**: 2025-11-10
-**Model**: GPT2-small (12 layers, 768 dimensions)
-**Task**: Identifying sarcasm detection circuits using differential activation analysis
-
 ## Goal
 
-Replicate the circuit discovery experiment that identified mechanisms for sarcasm detection in GPT2-small. The original study aimed to find which transformer components (MLPs and attention heads) are specialized for distinguishing sarcastic from literal text.
+Identify the computational circuit in GPT2-small responsible for detecting sarcasm in text using differential activation analysis.
+
+## Research Question
+
+What components (MLPs and attention heads) in GPT2-small show differential activation patterns between sarcastic and literal text, and how do these components form a hierarchical processing circuit?
 
 ## Data
 
 ### Dataset Design
-- **5 paired examples** (sarcastic vs. literal statements)
-- **Paired structure**: Same topic, opposite intent
-- **Sarcastic pattern**: Positive words + negative situations
-- **Literal pattern**: Genuine positive sentiment
+- **Size**: 5 paired examples (10 texts total)
+- **Structure**: Sarcastic/literal pairs on similar topics
+- **Sarcastic examples**: Positive words in negative contexts
+  - "Oh great, another meeting at 7 AM."
+  - "Wow, I just love getting stuck in traffic."
+  - "Perfect, my computer crashed right before the deadline."
+  - "Fantastic, it's raining on my only day off."
+  - "Amazing, the wifi is down again."
 
-### Example Pairs
-1. Sarcastic: "Oh great, another meeting at 7 AM."
-   Literal: "I'm excited about the meeting at 7 AM tomorrow."
+- **Literal examples**: Genuine positive sentiment
+  - "I'm excited about the meeting at 7 AM tomorrow."
+  - "I really enjoy my peaceful morning commute."
+  - "I'm glad I saved my work before the deadline."
+  - "I love relaxing at home on my day off."
+  - "The wifi connection is working great today."
 
-2. Sarcastic: "Wow, I just love getting stuck in traffic."
-   Literal: "I really enjoy my peaceful morning commute."
-
-3. Sarcastic: "Fantastic, my computer crashed right before the deadline."
-   Literal: "I'm glad I finished my work well before the deadline."
-
-4. Sarcastic: "Perfect timing for the fire alarm during my presentation."
-   Literal: "The presentation went smoothly without any interruptions."
-
-5. Sarcastic: "Oh wonderful, it's raining on my wedding day."
-   Literal: "The weather is perfect for my wedding day."
-
-### Rationale
-The paired design isolates sarcasm detection from topic modeling. Components showing high differential activation between pairs are candidates for the sarcasm circuit.
+### Data Characteristics
+- Paired structure enables direct comparison
+- Clear discourse markers in sarcastic text ("Oh", "Wow", "Perfect")
+- Sentiment-context incongruity is the key feature
 
 ## Method
 
 ### 1. Model Setup
-- Loaded GPT2-small using TransformerLens
-- Set random seeds (42) for reproducibility
-- Used NVIDIA A100 80GB GPU for computation
+- **Model**: GPT2-small (HookedTransformer from TransformerLens)
+- **Configuration**:
+  - 12 layers
+  - 12 attention heads per layer
+  - d_model = 768 (MLP dimension)
+  - d_head = 64 (attention head dimension)
+- **Device**: CUDA (NVIDIA A100 80GB)
+- **Reproducibility**: Seeds set to 42
 
 ### 2. Activation Collection
-Implemented `get_model_activations()` function:
-- Tokenized text with BOS token prepending
-- Ran model with `run_with_cache()` to store all intermediate activations
-- Cached 208 hook points per example
+For each text example:
+1. Tokenize with BOS token prepended
+2. Run forward pass with activation caching
+3. Store all intermediate activations using HookedTransformer hooks
 
-### 3. Differential Activation Measurement
-Implemented `measure_differential_activation()` function:
-- Computed L2 norm of activation differences between sarcastic and literal pairs
-- Averaged activations over sequence dimension for length normalization
-- Formula: `||mean(act_sarcastic) - mean(act_literal)||_2`
+### 3. Differential Activation Analysis
 
-### 4. Component Analysis
-Analyzed all 156 components:
-- **12 MLP layers** (m0-m11): Hook point `blocks.{layer}.hook_mlp_out`
-- **144 attention heads** (a0.h0-a11.h11): Hook point `blocks.{layer}.attn.hook_z`
+**Core Metric**: L2 norm of activation differences
 
-For each of 5 paired examples:
-- Computed differential activation for each component
-- Averaged across all pairs to get component importance ranking
+For each component (MLP or attention head):
+1. Extract activations for sarcastic and literal examples
+2. Average activations over sequence dimension
+3. Compute L2 difference: `||mean(act_sarc) - mean(act_lit)||_2`
+4. Average across all 5 pairs
 
-### 5. Circuit Construction
-Budget-constrained greedy selection algorithm:
+**Hook Points Used**:
+- MLPs: `blocks.{layer}.hook_mlp_out` (shape: [batch, seq, 768])
+- Attention heads: `blocks.{layer}.attn.hook_z` (shape: [batch, seq, 12, 64])
 
-**Constraints:**
+### 4. Circuit Construction
+
+**Budget Constraints**:
 - Total budget: 11,200 dimensions
 - Input embedding: 768 dims (required)
 - MLP layer: 768 dims each
 - Attention head: 64 dims each
 
-**Selection Process:**
+**Selection Algorithm** (greedy):
 1. Start with input embedding (768 dims)
-2. Add all MLPs with differential ≥ 7.0 (11 MLPs × 768 = 8,448 dims)
-3. Fill remaining budget with top attention heads (31 heads × 64 = 1,984 dims)
-4. Total: 1 + 11 + 31 = 43 components using exactly 11,200 dims
+2. Add all MLPs with differential ≥ 7.0 (10 MLPs × 768 = 7,680 dims)
+3. Fill remaining budget with top attention heads (2,752 dims / 64 = 43 heads)
+4. Total: 11,200 dims (100% utilization)
+
+**Rationale**:
+- MLPs show much higher differential than attention heads
+- Prioritize high-impact components
+- Maximize total differential activation within budget
 
 ## Results
 
 ### Component Rankings
 
-**Top 12 Components:**
-1. m2: 30.81 (MLP Layer 2 - Primary sarcasm detector)
-2. m11: 22.85 (MLP Layer 11 - Final integration)
-3. m10: 17.78
-4. m9: 14.04
-5. m8: 11.80
-6. m7: 9.84
-7. m6: 8.95
-8. m0: 8.11
-9. m1: 7.88
-10. m5: 7.85
-11. m4: 7.34
-12. m3: 6.18
+**Top 10 MLPs** (by differential activation):
+1. m2: 31.51 ← **Dominant sarcasm detector**
+2. m11: 22.32
+3. m10: 17.47
+4. m9: 13.23
+5. m8: 11.51
+6. m7: 9.70
+7. m6: 8.70
+8. m1: 8.07
+9. m0: 7.98
+10. m5: 7.59
 
-**Top 10 Attention Heads:**
-1. a11.h8: 3.32 (Layer 11, head 8)
-2. a11.h0: 2.81 (Layer 11, head 0)
-3. a8.h5: 1.50
-4. a9.h3: 1.48
-5. a6.h11: 1.45
-6. a5.h3: 1.35
-7. a10.h5: 1.32
-8. a4.h11: 1.31
-9. a9.h10: 1.31
-10. a11.h3: 1.26
+**Top 10 Attention Heads**:
+1. a11.h8: 3.00 ← **Output integration head**
+2. a11.h0: 2.59
+3. a8.h5: 1.43
+4. a4.h11: 1.37
+5. a6.h11: 1.36
+6. a10.h5: 1.29
+7. a5.h3: 1.27
+8. a11.h3: 1.24
+9. a9.h3: 1.23
+10. a8.h10: 1.22
 
-### Final Circuit
-- **Total components**: 43
-- **Input embedding**: 1
-- **MLPs**: 11 (m0, m1, m2, m4, m5, m6, m7, m8, m9, m10, m11)
-- **Attention heads**: 31 (ranked by differential activation)
-- **Budget utilization**: 11,200/11,200 (100%)
+### Final Circuit Composition
 
-### Comparison with Original Results
+**Total**: 54 components
+- Input embedding: 1 (768 dims)
+- MLPs: 10 (7,680 dims)
+- Attention heads: 43 (2,752 dims)
+- **Write budget**: 11,200 / 11,200 (100%)
 
-**Key Metrics:**
-- MLP Layer 2: 30.81 (original: 32.47) — 5.1% difference
-- MLP Layer 11: 22.85 (original: 22.30) — 2.5% difference
-- Head a11.h8: 3.32 (original: 3.33) — 0.2% difference
-- Head a11.h0: 2.81 (original: 2.74) — 2.5% difference
+**MLP Distribution**:
+- Early layers (L0-L2): m0, m1, **m2** (dominant)
+- Middle layers (L5-L7): m5, m6, m7
+- Late layers (L8-L11): m8, m9, m10, m11
+- Excluded: m3, m4 (differential < 7.0)
 
-**Circuit Overlap:**
-- All 10 original MLPs replicated
-- 1 additional MLP included (m4, differential 7.34)
-- 31/43 original attention heads replicated (72%)
-- 4/5 top attention heads replicated (80%)
-
-**Structural Agreement:**
-- MLP Layer 2 dominance: ✓ Confirmed
-- Late layer importance: ✓ Confirmed
-- Layer 11 attention heads critical: ✓ Confirmed
-- Three-stage hierarchical process: ✓ Confirmed
+**Attention Head Distribution**:
+- Layer 11: 5 heads (including top 2)
+- Layer 8: 5 heads
+- Layer 4-6: 13 heads
+- Other layers: 20 heads
+- Dense coverage across middle-to-late layers
 
 ## Analysis
 
-### Three-Stage Sarcasm Detection Mechanism
+### Three-Stage Hierarchical Model
 
-**Stage 1: Early Detection (Layers 0-2)**
-- **m2** is the primary sarcasm detector (30.81 differential)
-- ~35% stronger than next strongest component
-- Detects incongruity: positive words + negative context
-- Supported by m0 and m1 for initial encoding
+#### Stage 1: Early Detection (L0-L2)
+**Primary component**: m2 (diff = 31.51)
+- **Function**: Detect incongruity between sentiment words and context
+- **Evidence**: 41% stronger than next component (m11)
+- **Mechanism**: Process combination of positive sentiment markers ("great", "love") with negative contextual cues
 
-**Stage 2: Distributed Propagation (Layers 3-7)**
-- MLPs m5, m6, m7 refine and propagate the sarcasm signal
-- Attention heads in layers 4-6 distribute information across positions
-- Moderate differential activations (7-10 range)
+**Supporting components**: m0 (7.98), m1 (8.07)
+- Provide initial sentiment and context encoding
+- Feed into m2's incongruity computation
 
-**Stage 3: Final Integration (Layers 8-11)**
-- Late MLPs (m8-m11) perform final processing
-- Increasing differential pattern: m8 (11.80) → m11 (22.85)
-- Layer 11 attention heads (a11.h8, a11.h0) integrate signal for output
-- These "output heads" determine final prediction
+#### Stage 2: Signal Propagation (L3-L7)
+**Key MLPs**: m5 (7.59), m6 (8.70), m7 (9.70)
+- **Function**: Propagate and refine sarcasm signal from m2
+- **Evidence**: Moderate differential activation
+- **Attention heads** (L4-L6): Dense cluster distributes information across positions
+
+#### Stage 3: Final Integration (L8-L11)
+**Critical MLPs**: m8 (11.51), m9 (13.23), m10 (17.47), m11 (22.32)
+- **Function**: Final processing before output
+- **Evidence**: Increasing differential through layers
+- m11 particularly strong, suggesting final pre-output refinement
+
+**Output heads**: a11.h8 (3.00), a11.h0 (2.59)
+- **Function**: Integrate processed sarcasm signal into final representation
+- **Evidence**: Strongest attention head differentiation
+- Determine how sarcasm affects token predictions
 
 ### Key Insights
 
-1. **Early Detection**: Sarcasm is identified at Layer 2, not later
-2. **Not Reversal**: Late layers integrate detection, not flip polarity
-3. **Hierarchical**: Clear progression through three stages
-4. **MLP Dominance**: MLPs 4-8x more important than attention heads
-5. **Distributed Attention**: 31 heads suggest complex information routing
+1. **Early detection dominates**: Network identifies sarcasm at Layer 2, not through gradual accumulation
+2. **Not sentiment reversal**: Later layers integrate early detection signal rather than flipping polarity
+3. **Distributed routing**: 43 attention heads suggest complex information movement across sequence positions
+4. **Hierarchical refinement**: Early detection → middle propagation → late integration
 
-### Numerical Fidelity
-All key quantitative findings replicated within 5% of original values, indicating:
-- Correct implementation of analysis pipeline
-- Robust differential activation patterns
-- Deterministic model behavior with proper seeding
+### Comparison to Hypothesis
 
-### Minor Differences Explained
-- **43 vs 54 components**: Used threshold 7.0 vs original's variable threshold
-- **Included m4**: Differential 7.34 exceeded threshold
-- **Fewer attention heads**: More MLPs consumed budget, leaving less for heads
+From the plan document, the original hypothesis was:
+- Early layers (L0-L3): Sentiment encoding ✓ (Partially correct)
+- Middle layers (L4-L7): Incongruity detection ✗ (Actually happens at L2)
+- Late layers (L8-L11): Meaning reversal ✗ (Actually signal integration)
 
-These differences don't affect core conclusions about the circuit's structure and function.
+**What was correct**:
+- Early layers important for initial processing ✓
+- Late layers critical for final output ✓
+- MLPs more important than attention heads ✓
+
+**What was incorrect**:
+- Timing: Detection happens at L2, not L4-L7
+- Mechanism: Integration not reversal
 
 ## Limitations
 
-1. **Small Dataset**: Only 5 paired examples analyzed
-   - May not capture full range of sarcasm patterns
-   - Real-world sarcasm more complex and varied
+1. **Small dataset**: Only 5 paired examples
+   - Statistical variation possible
+   - May not generalize to all sarcasm types
 
-2. **Synthetic Data**: Examples hand-crafted with clear patterns
-   - May not generalize to natural sarcasm
-   - Lacks nuance of real conversations
+2. **Synthetic data**: Hand-crafted examples may not capture real-world complexity
+   - All follow similar pattern (positive words + negative context)
+   - Missing: implicit sarcasm, cultural context, tone markers
 
-3. **Correlation ≠ Causation**: High differential activation doesn't prove causal importance
-   - Needs ablation testing to validate
-   - Component could be correlate rather than cause
+3. **Correlation ≠ Causation**: High differential doesn't prove causal importance
+   - Components may be correlated with sarcasm without being necessary
+   - Need ablation studies to test causal contribution
 
-4. **No Behavioral Testing**: Haven't verified circuit actually performs sarcasm detection
-   - Need to test on held-out examples
-   - Should measure accuracy degradation when components ablated
+4. **No behavioral validation**: Haven't verified circuit reproduces sarcasm detection
+   - Should test on held-out examples
+   - Should measure accuracy drop when ablating components
 
-5. **Single Model**: Only tested GPT2-small
-   - Unclear if findings generalize to other models
-   - Larger models might use different mechanisms
+5. **Determinism**: Single run with fixed seeds
+   - Results should be verified across multiple random initializations
+   - Variability analysis needed
 
-## Conclusions
+## Future Directions
 
-This replication successfully validated the original circuit discovery findings:
+1. **Systematic ablation**: Test each component's causal contribution by removing it
+2. **Larger dataset**: Expand to all 20+ examples or real-world data
+3. **Attention pattern analysis**: Visualize what key heads attend to
+4. **Iterative pruning**: Remove least important components, test fidelity
+5. **Cross-task generalization**: Test if circuit works for other incongruity tasks
+6. **Probing analysis**: Train linear classifiers to detect sarcasm signal at each layer
 
-✓ **Reproduced key quantitative results** (< 5% error on main metrics)
-✓ **Confirmed mechanistic hypothesis** (three-stage hierarchical processing)
-✓ **Identified same critical components** (m2, m11, a11.h8, a11.h0)
-✓ **Validated methodology** (differential activation analysis works)
+## Reproducibility
 
-The sarcasm circuit in GPT2-small is a **three-stage system**:
-1. Early incongruity detection at Layer 2
-2. Distributed signal propagation through middle layers
-3. Final integration via late MLPs and Layer 11 attention heads
+### Environment
+- Python with PyTorch (CUDA enabled)
+- TransformerLens library
+- Random seeds: 42 (both torch and numpy)
 
-This differs from naive expectation of simple sentiment reversal. Instead, the model develops a hierarchical representation where sarcasm is detected early and progressively refined.
+### Computational Requirements
+- GPU memory: ~5GB for GPT2-small with caching
+- Runtime: ~30 seconds for full pipeline
+- Storage: ~50MB for cached activations
 
-## Future Work
-
-1. **Expand dataset**: Test on all 20 original examples + real-world data
-2. **Ablation experiments**: Causally validate component importance
-3. **Attention pattern analysis**: Visualize information flow
-4. **Cross-model testing**: Check if mechanism generalizes
-5. **Minimal circuit**: Prune to essential components only
+### Data Availability
+- Synthetic dataset defined in code
+- Can be regenerated from scratch
+- Original examples listed in this document
