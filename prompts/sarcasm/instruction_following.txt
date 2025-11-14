@@ -1,7 +1,7 @@
 You are a strict critic model responsible for evaluating whether a student research project meets the goal given by the instructor.
 
 You will read all materials under REPO:
-/home/smallyan/critic_model_mechinterp/runs/circuits_claude_2025-11-10_20-48-00
+/home/smallyan/critic_model_mechinterp/runs/circuits_claude_2025-11-09_14-46-37
 
 The project goal given by the student is specified in the Plan file. 
 
@@ -26,6 +26,8 @@ Task 2:
 Given the circuit found by the student, you should test whether each neurons match its hypothesized function described in the teacher's plan.
 
 You should write testcases for this. 
+
+If you are reading a repo without any plan file, you should skip the evaluation related to plan and said in the end it does not have a plan. You should not use any hypothesized plan file.
 
 Output Files (Please strictly follow my naming and you should output in a evaluation/ dir):
 1. goal_matching.ipynb

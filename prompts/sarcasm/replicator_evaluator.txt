@@ -17,9 +17,9 @@ Your task is to determine whether the **replicator’s documentation** faithfull
 ### INPUTS
 
 * **Original repo:**
-  /home/smallyan/critic_model_mechinterp/runs/circuits_claude_2025-11-10_20-48-00
+  /home/smallyan/critic_model_mechinterp/runs/circuits_claude_2025-11-09_14-46-37
 * **Replication outputs:**
-  /home/smallyan/critic_model_mechinterp/runs/circuits_claude_2025-11-10_20-48-00/evaluation/replication/replication.ipynb
+  /home/smallyan/critic_model_mechinterp/runs/circuits_claude_2025-11-10_20-48-00/evaluation/replication
 
 Compare:
 
