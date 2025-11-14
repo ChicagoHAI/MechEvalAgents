@@ -1,0 +1,20 @@
+[code_id]: CQ1
+Title: Fourier Basis R² Computation
+Prompt: Verify that Fourier bases with frequencies k ∈ {0, 1, 2, 5} can achieve high R² (≈0.84) for digit embeddings. Implement functions to: (1) construct the Fourier basis matrix F with columns [1, cos(2πn/10), sin(2πn/10), cos(2πn/5), sin(2πn/5), (-1)^n], (2) compute R² fit for synthetic embeddings against this basis, (3) generate Fourier-structured embeddings and report median R².
+Expected_Outcome: Solution should compute median R² > 0.80 for Fourier-structured embeddings. The R² is computed as 1 - ||x - F@C||² / ||x - mean(x)||², where C is the least-squares fit coefficient. Tolerance: ±0.05 for R² comparison due to random initialization.
+Reference: Section 4: Results - Fourier Basis Embeddings (Pentagonal Prism); Code Walkthrough: fourier_r2_fits.py (lines 169-205)
+---
+
+[code_id]: CQ2
+Title: Long-Range Dependency Pattern Verification  
+Prompt: Verify the long-range dependency pattern for multi-digit multiplication. For a given output digit ck (e.g., k=3), determine which input digit pairs (ai, bj) should influence it according to the multiplication algorithm. Implement a function to compute "contribution strength" based on whether i+j=k (direct contribution), i+j<k (carry contribution), or i+j>k (no contribution). Create a 4×4 dependency matrix and identify strongest contributors.
+Expected_Outcome: For k=3 (output digit c3), the pairs with i+j=3 should have maximum contribution: (0,3), (1,2), (2,1), (3,0). Pairs with i+j<3 should have decreasing contribution (carry effects). Pairs with i+j>3 should have zero contribution. The dependency matrix should clearly show this pattern with highest values on the anti-diagonal where i+j=k.
+Reference: Section 4: Results - Logit Attribution Results; Section 4: Results - Evidence of Long-Range Dependencies
+---
+
+[code_id]: CQ3
+Title: Learning Dynamics Simulation (SFT vs ICoT)
+Prompt: Simulate the differential learning dynamics between SFT and ICoT training. Create simplified learning curves for output digits c0-c7 showing: (1) difficulty scores based on long-range dependencies (middle digits harder), (2) SFT learning with gradient flow cutoff causing edge digits (c0,c1,c7) to learn quickly while middle digits (c3-c6) plateau at higher loss, (3) ICoT learning with sustained gradient flow allowing all digits to reach low loss. Visualize the loss curves and identify plateauing digits.
+Expected_Outcome: SFT simulation should show c0, c1, c7 reaching final loss < 0.2 while c3, c4, c5, c6 plateau at loss > 0.5. ICoT simulation should show all digits eventually reaching loss < 0.2, with middle digits taking more steps but not plateauing. Plot should clearly visualize this difference with loss curves over ~100 training steps.
+Reference: Section 5: Analysis - Standard Fine-Tuning Failure Pattern; Section 5: Analysis - Learning Dynamics Analysis; Code Walkthrough: grad_norms_and_losses.py
+---
