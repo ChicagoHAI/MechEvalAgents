@@ -7,7 +7,7 @@ Use the terminology and concepts exactly as they appear in the document.
 If something is not stated or cannot be inferred, say so.
 
 Here is the documentation:
-{DOCUMENTATION PATH}
+{DOCUMENTATION_PATH}
 
 Here is the exam question:
 {EXAM_PATH}
