@@ -33,5 +33,9 @@ Answer: <your final answer>
 
 Think carefully. Do not hallucinate. If you genuinely do not know the answer from the documentation, clearly state that.
 
+<<<<<<< HEAD
 ### Output file (Please strictly follow my naming and you should output in a question/ dir under the parent directory of the documentation file given to you)
+=======
+### Output file (Please strictly follow my naming and you should output in the same directory where the exam file is.)
+>>>>>>> eb1f6c3 (change dir)
 student_answer.ipynb: all the answers to the questions. 
