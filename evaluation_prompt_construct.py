@@ -3,7 +3,7 @@ import os
 import argparse
 from pathlib import Path
 
-def fill_evaluation_prompts(repo_path, task_name, system_prompt_path=None, replication_path=None, skip_replication=False):
+def fill_evaluation_prompts(repo_path, task_name, system_prompt_path=None, replication_path=None, replication=False, student=False, exam_path=None, documentation_path=None):
     """
     Fill in REPO_PATH, SYSTEM_PROMPT_PATH, and REPLICATION_PATH in evaluation prompt files.
 
@@ -24,11 +24,18 @@ def fill_evaluation_prompts(repo_path, task_name, system_prompt_path=None, repli
         "grader.txt"
     ]
 
-    if skip_replication:
+    if replication:
         evaluation_prompts = ["replicator_evaluator.txt"]
     
     if student:
+        
         evaluation_prompts = ["student.txt"]
+
+    if system_prompt_path == None:
+        if "instruction_following.txt" in evaluation_prompts:
+            evaluation_prompts.remove("instruction_following.txt")
+        if "instruction_following_l3.txt" in evaluation_prompts:
+            evaluation_prompts.remove("instruction_following_l3.txt")
 
     print(f"Filling prompts with REPO_PATH: {repo_path}\n")
 
@@ -38,6 +45,7 @@ def fill_evaluation_prompts(repo_path, task_name, system_prompt_path=None, repli
             continue
 
         text = open(template_path, "r").read()
+        print(prompt_file)
 
         # Build replacements based on the specific file
         replacements = {"REPO_PATH": repo_path}
@@ -65,23 +73,41 @@ def fill_evaluation_prompts(repo_path, task_name, system_prompt_path=None, repli
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--replication", type=bool, default=False)
+    parser.add_argument("--replication",action="store_true")
     parser.add_argument("--task_name", type=str, default="ioi_l2")
     parser.add_argument("--repo_path", type=str, default="YOUR REPO")
     parser.add_argument("--system_prompt_path", type=str, default="YOUR SYSTEM PROMPT")
     parser.add_argument("--replication_path", type=str, default="YOUR REPLICATION PATH")
 
-    parser.add_argument("--student", type=bool, default=False)
+    parser.add_argument("--student", action="store_true")
     parser.add_argument("--exam_path", type=str, default="YOUR EXAM PATH")
     parser.add_argument("--documentation_path", type=str, default="YOUR DOCUMENTATION PATH")
 
+    parser.add_argument("--human", action="store_true")
+
 
     args = parser.parse_args()
-    skip_replication = args.skip_replication
     task_name = args.task_name
     repo_path = args.repo_path
-    system_prompt_path = args.system_prompt_path
-    replication_path = args.replication_path
+    if args.human:
+        system_prompt_path = None
+    else:
+        system_prompt_path = args.system_prompt_path
+    
+    if args.replication:
+        replication = True
+        replication_path = args.replication_path
+    else:
+        replication = False
+        replication_path = None
+    if args.student:
+        student = True
+        exam_path = args.exam_path
+        documentation_path = args.documentation_path
+    else:
+        student = False
+        exam_path = None
+        documentation_path = None
 
-
-    fill_evaluation_prompts(repo_path, task_name, system_prompt_path, replication_path)
+ 
+    fill_evaluation_prompts(repo_path, task_name, system_prompt_path, replication_path, replication, student, exam_path, documentation_path)
