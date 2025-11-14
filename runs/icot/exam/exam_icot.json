@@ -1,0 +1,172 @@
+[
+  {
+    "question_type": "multiple_choice",
+    "question": "What is the primary research question addressed in the ICoT multiplication study?",
+    "answer": "A",
+    "choice": [
+      "A) Why do Transformers fail to learn multi-digit multiplication despite having sufficient capacity?",
+      "B) How can we design better optimization algorithms for neural networks?",
+      "C) What is the maximum number of digits that Transformers can multiply?",
+      "D) How can we reduce the computational cost of training large language models?"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 1: Goal - Primary Research Question"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "In the ICoT multiplication task, operands are written with least-significant digit first. If the actual multiplication problem is 8331 \u00d7 5015, how would the operands be written in the model's input format? Provide only the operands portion (before any special delimiters).",
+    "answer": "1338 * 5105",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 2: Data - Data Format Examples"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What is the minimal architecture configuration that successfully learns 4\u00d74 multiplication with ICoT training?",
+    "answer": "B",
+    "choice": [
+      "A) 4-layer, 8-head Transformer with d=1024",
+      "B) 2-layer, 4-head Transformer with d=768",
+      "C) 12-layer, 8-head Transformer with d=768",
+      "D) 1-layer, 2-head Transformer with d=512"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 3: Method - Model Architecture"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What accuracy does the standard fine-tuning (SFT) model achieve on 4\u00d74 digit multiplication, even when scaled to 12 layers and 8 heads?",
+    "answer": "C",
+    "choice": [
+      "A) Approximately 50%",
+      "B) Approximately 25%",
+      "C) Less than 1%",
+      "D) Approximately 81%"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4: Results - Model Performance table"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Explain the ICoT (Implicit Chain-of-Thought) training procedure. Specifically, describe how the training data changes across epochs and what effect this has on the model.",
+    "answer": "ICoT training gradually removes chain-of-thought tokens from the input over multiple epochs. At each of the 13 training epochs, 8 CoT tokens are removed from the left side of the sequence. This progressive removal forces the model to internalize intermediate computations in its hidden states, providing implicit supervision that guides the model toward learning attention tree structures and long-range dependencies needed for multiplication.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 2: Data - Data Format Examples; Section 3: Method - Training Procedures"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "In the discovered attention tree mechanism, what are the distinct roles of Layer 1 and Layer 2?",
+    "answer": "D",
+    "choice": [
+      "A) Layer 1 retrieves cached values; Layer 2 caches pairwise products",
+      "B) Both layers perform identical attention patterns for redundancy",
+      "C) Layer 1 processes digits; Layer 2 generates output tokens",
+      "D) Layer 1 caches pairwise products ai\u00d7bj in hidden states; Layer 2 retrieves cached computations"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4: Results - Attention Tree Structure"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "Which Fourier frequencies k are primarily used by the ICoT model to represent digits 0-9?",
+    "answer": "B",
+    "choice": [
+      "A) k \u2208 {0, 1, 2, 3, 4}",
+      "B) k \u2208 {0, 1, 2, 5}",
+      "C) k \u2208 {0, 2, 4, 6, 8}",
+      "D) k \u2208 {1, 3, 5, 7, 9}"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4: Results - Fourier Basis Embeddings (Pentagonal Prism)"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "According to the logit attribution analysis, which input digits (ai or bj) should affect the output digit c3? Explain the general pattern and why this represents a long-range dependency.",
+    "answer": "Output digit c3 is affected by all input digit pairs {ai, bj} where i+j \u2264 3. This includes: a0b3, a1b2, a2b1, a3b0 (direct partial products for c3), plus all pairs that contribute to earlier carries (i+j < 3). This is a long-range dependency because c3 depends on tokens from both operands that may be many positions away in the sequence, requiring the model to maintain and combine information across distant context positions.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4: Results - Evidence of Long-Range Dependencies"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "According to the gradient norm and loss analysis, which output digits does the SFT model successfully learn, and which digits plateau?",
+    "answer": "A",
+    "choice": [
+      "A) Learns c0, c1, c7 (first two and last); plateaus on c3-c6 (middle digits)",
+      "B) Learns only c0 and c1; fails on all others",
+      "C) Learns all digits equally poorly",
+      "D) Learns c4-c6; fails on c0-c3 and c7"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 5: Analysis - Standard Fine-Tuning Failure Pattern"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The attention head outputs form Minkowski sums when attending to two digits ai and bj with attention weights \u03b1 and (1-\u03b1). Explain what geometric structure this creates in the embedding space and why it might be useful for multiplication.",
+    "answer": "The Minkowski sum ATT(i,j) = \u03b1Ai + (1-\u03b1)Bj creates nested geometric structures in embedding space. 3D PCA reveals clusters (for digit ai) containing sub-clusters (for digit bj) with identical geometry at global and local scales - a fractal-like pattern. This is useful for multiplication because it efficiently represents all pairwise digit combinations {ai, bj} needed to compute partial products, with the geometric structure naturally organizing these combinations in a way that preserves both individual digit information and their interactions.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4: Results - Minkowski Sums in Attention Heads"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "The auxiliary loss model achieves 99% accuracy by adding linear probes. What does this result demonstrate about the failure of standard fine-tuning?",
+    "answer": "C",
+    "choice": [
+      "A) SFT models lack sufficient capacity to learn multiplication",
+      "B) SFT models need more training data to succeed",
+      "C) SFT failure is an optimization problem, not a capacity problem; simple inductive bias is sufficient",
+      "D) Auxiliary losses increase model capacity beyond standard architectures"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 7: Main Takeaways - Core Insight #5"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Based on the discovered mechanisms (attention trees, Fourier bases, Minkowski sums), would you expect an ICoT-trained model to successfully generalize to 5\u00d75 digit multiplication without additional training? Explain your reasoning by considering what aspects would transfer and what might be problematic.",
+    "answer": "The ICoT model would likely struggle with 5\u00d75 multiplication without additional training. While the core mechanisms (attention trees for caching/retrieval, Fourier representations, Minkowski sums) are general computational strategies, several aspects are task-specific: (1) The 2-layer architecture may have insufficient depth for the longer dependency chains required, (2) The attention tree structure learned for 4\u00d74 has specific branching patterns tied to computing 8 output digits, not 10, (3) The learned probe weights and intermediate representations are calibrated for the specific range of partial sums in 4\u00d74 multiplication. However, the fundamental algorithmic approach should transfer conceptually, suggesting that fine-tuning or a slightly deeper architecture could enable 5\u00d75 multiplication more easily than training from scratch.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 6: Next Steps - Immediate Extensions; Section 4: Results - Discovered Mechanisms"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "**CODE QUESTION CQ1**: Verify Fourier Basis R\u00b2 Computation\n\nThe documentation states that Fourier bases with frequencies k \u2208 {0, 1, 2, 5} achieve R\u00b2 \u2248 0.84 for digit embeddings.\n\nYour task: Implement a function to compute the R\u00b2 fit for a set of 10-dimensional vectors (representing digits 0-9) against the Fourier basis matrix.\n\nThe Fourier basis matrix F (shape: 10\u00d76) is defined as:\n- Column 0: Constant 1\n- Columns 1-2: cos(2\u03c0n/10), sin(2\u03c0n/10) for n \u2208 {0,1,...,9}\n- Columns 3-4: cos(2\u03c0n/5), sin(2\u03c0n/5)\n- Column 5: Parity (-1)^n\n\nComplete the code to:\n1. Construct the Fourier basis matrix F\n2. Generate a synthetic embedding matrix (10\u00d78) with structure similar to what ICoT learns\n3. Compute R\u00b2 for each dimension's fit to the Fourier basis\n4. Report the median R\u00b2 value\n\nExpected outcome: Median R\u00b2 should be high (>0.80) for embeddings with Fourier structure.",
+    "answer": "See solution in exam_code_solutions.ipynb. Expected median R\u00b2 > 0.80 for Fourier-structured embeddings, demonstrating the mathematical validity of the Fourier basis analysis.",
+    "choice": [],
+    "requires_code": true,
+    "code_id": "CQ1",
+    "reference": "Section 4: Results - Fourier Basis Embeddings; Code Walkthrough: fourier_r2_fits.py"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "**CODE QUESTION CQ2**: Verify Long-Range Dependency Pattern\n\nThe documentation claims that for correct multiplication, output digit ck should be most strongly influenced by input digits ai, bj where i+j = k.\n\nYour task: Implement a simulation to verify this dependency pattern.\n\nComplete the code to:\n1. For a given output digit index k (e.g., k=3 for c3)\n2. Determine which input digit pairs (i,j) should affect c3 according to multiplication algorithm\n3. Compute the \"contribution strength\" of each pair based on i+j relationship to k\n4. Visualize or report which pairs have strongest influence\n\nExpected outcome: For k=3, pairs where i+j=3 (like (0,3), (1,2), (2,1), (3,0)) should show strongest contribution, with decreasing strength for i+j<3.",
+    "answer": "See solution in exam_code_solutions.ipynb. For k=3, pairs (0,3), (1,2), (2,1), (3,0) should have maximum contribution weight, with decreasing weights for pairs where i+j < 3 due to carry propagation.",
+    "choice": [],
+    "requires_code": true,
+    "code_id": "CQ2",
+    "reference": "Section 4: Results - Logit Attribution Results"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "**CODE QUESTION CQ3**: Simulate Learning Dynamics Difference\n\nThe documentation describes how SFT learns edge digits (c0, c1, c7) but plateaus on middle digits (c3-c6), while ICoT learns all digits successfully.\n\nYour task: Create a simplified simulation of learning dynamics that demonstrates this differential learning pattern.\n\nComplete the code to:\n1. Define a simplified \"difficulty score\" for each output digit c0-c7 based on the number of long-range dependencies\n2. Simulate two learning curves: SFT (with gradient flow cutoff after early digits learn) and ICoT (with sustained gradient flow)\n3. Plot the loss curves for each digit over training steps\n4. Identify which digits plateau in SFT vs continue improving in ICoT\n\nExpected outcome: SFT should show rapid improvement for c0, c1, c7 then plateau; middle digits c3-c6 should show slower improvement and plateau at higher loss. ICoT should show sustained improvement across all digits.",
+    "answer": "See solution in exam_code_solutions.ipynb. Expected pattern: SFT curves show c0,c1,c7 reaching low loss quickly then plateauing, while c3-c6 plateau at higher loss values. ICoT curves show all digits achieving low loss, with middle digits taking longer but ultimately succeeding.",
+    "choice": [],
+    "requires_code": true,
+    "code_id": "CQ3",
+    "reference": "Section 5: Analysis - Standard Fine-Tuning Failure Pattern, Learning Dynamics Analysis"
+  }
+]
