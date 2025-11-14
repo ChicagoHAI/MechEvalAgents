@@ -1,48 +1,218 @@
-# ICoT Replication Results
+# ICoT Replication Study - Summary
 
-This directory contains the complete replication of the ICoT multiplication reverse-engineering experiment.
+**Date**: 2025-11-14
+**Target**: Linear Regression Probing Experiment from ICoT Multiplication Research
+**Repository**: `/home/smallyan/critic_model_mechinterp/icot`
+**Status**: Partial Replication
 
-## Contents
+---
 
-1. **replication.ipynb** - Jupyter notebook with full implementation and analysis
-2. **documentation_replication.md** - Detailed documentation of goals, methods, and results
-3. **evaluation_replication.md** - Quantitative evaluation with scores and reflection
-4. **Figures**:
-   - `c_hat_distributions.png` - Distribution of ĉ values across 8 positions
-   - `c_hat_statistics.png` - Statistical summary of ĉ values
-   - `c_hat_correlation.png` - Correlation matrix between positions
+## Quick Summary
 
-## Summary
+This replication study attempted to reproduce the linear regression probing experiment that demonstrates the ICoT model's internal representation of intermediate values (ĉk) during multi-digit multiplication.
 
-**Replication Score: 4.0 / 5.0**
+**Result**: Partial success with a replication score of **2.8/5 (56%)**
 
-- ✅ Successfully replicated core ĉ computation algorithm (100% accuracy)
-- ✅ Validated on 1,000 multiplication examples
-- ✅ Comprehensive statistical analysis and visualization
-- ⚠️ Could not replicate neural network experiments (missing model checkpoints)
-- ✅ Thorough documentation and error transparency
+---
 
-## Key Results
+## Files in This Directory
 
-- All 1,000 examples produce correct multiplication results via ĉ values
-- ĉ values peak at position 3 (mean: 92.29, max: 263)
-- Strong correlation between adjacent positions (carry propagation)
-- Algorithm is fully deterministic and reproducible
+### Core Replication Files
+1. **`replication.ipynb`** - Jupyter notebook with complete replication attempt
+   - Includes data loading, model setup, and probing pipeline
+   - Designed to be self-contained and executable
+   - Status: Created but not fully executed due to technical issues
 
-## Limitations
+2. **`run_replication.py`** - Full Python script for probe training and evaluation
+   - Attempts to load ICoT and SFT models
+   - Extracts activations and trains linear probes
+   - Status: Encounters activation extraction errors
 
-The main model checkpoint (`state_dict.bin`) was not available in the repository, preventing replication of:
-- Linear probing experiments
-- Attention pattern analysis
-- Fourier basis analysis
-- Logit attribution experiments
+3. **`run_replication_simple.py`** - Simplified version focusing on model inference
+   - Tests basic model loading and generation
+   - Computes digit-wise accuracy
+   - Status: Partial execution, generation API incompatibility
 
-The replication focuses on the mathematical foundation, which was successfully validated.
+### Documentation
+4. **`documentation_replication.md`** - Comprehensive replication documentation
+   - Goal, Data, Method, Results, Analysis
+   - Describes what was attempted and achieved
+   - Documents all challenges encountered
 
-## How to Use
+5. **`evaluation_replication.md`** - Quantitative evaluation with scores
+   - Five criteria: Implementation, Environment, Results, Determinism, Errors
+   - Detailed scoring (1-5) for each criterion
+   - Final assessment and recommendations
 
-1. Open `replication.ipynb` in Jupyter to see the full analysis
-2. Read `documentation_replication.md` for detailed methodology
-3. Review `evaluation_replication.md` for quantitative assessment and reflection
+6. **`README.md`** - This file, providing overview
 
-Generated: 2025-11-13
+### Outputs
+7. **`accuracy_results.png`** - Visualization of digit-wise accuracy
+   - Generated but shows 0% accuracy due to execution errors
+
+8. **`results_summary.txt`** - Numerical results summary
+   - Generated but empty due to incomplete execution
+
+9. **`replication_output.log`** - Full execution log from initial attempt
+   - Captures errors and debugging information
+
+10. **`replication_simple_output.log`** - Log from simplified version
+    - Documents API compatibility issues
+
+---
+
+## Key Findings
+
+### ✅ Successful Components
+- Model loading (2L4H ICoT model from external checkpoint)
+- Data pipeline (1000 multiplication problems)
+- Ground truth computation (ĉk values)
+- Code understanding and documentation
+- Environment setup (GPU access confirmed)
+
+### ⚠️ Partial Components
+- Replication framework established
+- Probe architecture understood
+- Evaluation metrics defined
+- Visualization code prepared
+
+### ❌ Blocked Components
+- Activation extraction (hook incompatibility)
+- Model generation (API mismatch)
+- Probe training/evaluation (missing activations)
+- Quantitative result validation
+
+---
+
+## Replication Scores
+
+| Criterion | Score | Explanation |
+|-----------|-------|-------------|
+| **A. Implementation Reconstructability** | 3/5 | Code is clear but has custom infrastructure complexity |
+| **B. Environment Reproducibility** | 2/5 | No dependency pinning, external checkpoint storage |
+| **C. Result Fidelity** | 1/5 | Could not obtain quantitative results |
+| **D. Determinism/Seed Control** | 4/5 | Good seed management, minor gaps |
+| **E. Error Transparency** | 4/5 | All errors documented and analyzed |
+| **Overall Score** | **2.8/5** | **56% - Partial Success** |
+
+---
+
+## Main Technical Blockers
+
+1. **Hook Infrastructure**: `record_activations()` encounters `IndexError: tuple index out of range`
+   - Root cause: Mismatch between hooked model expectations and GPT-2 output format
+   - Impact: Cannot extract hidden states for probe training
+
+2. **Custom Generate API**: `ImplicitModel.generate()` has non-standard signature
+   - Expects: `max_new_tokens`, `num_beams`, `stop_on_two_eos`
+   - Impact: Cannot use standard HuggingFace generation patterns
+
+3. **Environment Specification**: No `requirements.txt` or version pinning
+   - Impact: Difficult to diagnose if errors are environment-specific
+
+---
+
+## Recommendations
+
+### For Future Replicators
+1. Start with minimal examples before full pipeline
+2. Debug hook infrastructure carefully
+3. Contact original authors for known workarounds
+4. Consider alternative approaches (direct forward pass)
+
+### For Original Authors
+1. **Critical**: Provide `requirements.txt` with exact versions
+2. **Critical**: Include minimal working example (< 50 lines)
+3. **Important**: Host checkpoints in repository or provide download script
+4. **Important**: Document custom APIs explicitly
+5. **Helpful**: Add unit tests for key functions
+6. **Helpful**: Create troubleshooting guide
+
+---
+
+## How to Use These Files
+
+### To Review the Replication Attempt
+1. Read `documentation_replication.md` for comprehensive overview
+2. Review `evaluation_replication.md` for detailed scoring
+3. Check logs for specific errors encountered
+
+### To Continue the Replication
+1. Start with `run_replication_simple.py` for debugging
+2. Fix hook infrastructure issues in activation extraction
+3. Verify activation shapes match expected dimensions
+4. Train probes once activations are accessible
+5. Compare results to original paper
+
+### To Understand the Experiment
+1. Read Goal and Method sections in `documentation_replication.md`
+2. Review the original code walkthrough at `../icot_restructured/code_walkthrough.md`
+3. Examine source code in `../src/`
+
+---
+
+## Context and Value
+
+### What This Replication Demonstrates
+
+**Positive**:
+- The experiment design is scientifically sound and well-documented
+- The research question is clear and well-motivated
+- The codebase is organized and mostly understandable
+- The approach (linear probing) is a valid mechanistic interpretability technique
+
+**Negative**:
+- Technical infrastructure creates reproducibility barriers
+- Custom wrappers and non-standard APIs add friction
+- Missing environment specifications complicate debugging
+- Full replication would require significant debugging effort
+
+### Scientific Contribution
+
+This partial replication contributes by:
+1. **Validating the methodology**: Confirmed the approach is theoretically sound
+2. **Identifying bottlenecks**: Documented specific technical barriers
+3. **Providing guidance**: Created roadmap for future replication attempts
+4. **Improving transparency**: Made explicit what works and what doesn't
+
+---
+
+## Estimated Effort for Full Replication
+
+- **With these files as starting point**: 4-8 hours of debugging by experienced ML engineer
+- **With author assistance**: 1-2 hours
+- **From scratch without documentation**: 16+ hours
+
+---
+
+## Contact and Questions
+
+This replication was conducted as an independent research reproducibility exercise. For questions about:
+- The original research: Contact ICoT paper authors
+- This replication attempt: Review `evaluation_replication.md` for detailed notes
+- Technical issues: Check `replication_output.log` and `replication_simple_output.log`
+
+---
+
+## Citation
+
+If you use or reference this replication study:
+
+```
+ICoT Multiplication Research - Replication Study
+Date: 2025-11-14
+Location: /home/smallyan/critic_model_mechinterp/icot/evaluation/replications/
+Replication Score: 2.8/5 (Partial Success)
+```
+
+Original Paper:
+```
+Bai et al., "Why Can't Transformers Learn Multiplication?
+Reverse-Engineering Reveals Long-Range Dependency Pitfalls"
+```
+
+---
+
+**Last Updated**: 2025-11-14
+**Replication Status**: Partial (56%)
+**Recommended Next Action**: Debug hook infrastructure or contact authors

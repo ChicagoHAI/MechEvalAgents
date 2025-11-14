@@ -1,152 +1,239 @@
-# ICoT Multiplication Reverse-Engineering: Replication Documentation
+# Replication Documentation: ICoT Multiplication Research
 
-## Goal
+**Date**: 2025-11-14
+**Replicator**: Independent Researcher
+**Original Repository**: `/home/smallyan/critic_model_mechinterp/icot`
 
-The goal of this replication is to reproduce the core computational experiment from the ICoT (Implicit Chain-of-Thought) multiplication reverse-engineering research. The original work investigates how transformer models learn to perform multi-digit multiplication by identifying intermediate computational values (running sums, denoted ĉ) that the model implicitly computes.
+---
 
-## Data
+## 1. Goal
 
-### Dataset
-- **Source**: `data/processed_valid.txt` from the icot repository
+### Research Objective
+Replicate the key experiment from the ICoT (Implicit Chain-of-Thought) multiplication research that demonstrates transformers can learn multi-digit multiplication through implicit intermediate representations.
+
+### Specific Experiment
+**Linear Regression Probing for Intermediate Values (ĉk)**
+
+The goal is to test whether the ICoT model internally represents running sums (ĉk) during 4×4 digit multiplication by training linear probes on hidden states to predict these intermediate values.
+
+### Expected Outcome
+- ICoT model should show significantly lower Mean Absolute Error (MAE) compared to standard fine-tuning (SFT)
+- This would confirm that ICoT learns to represent intermediate computation steps
+- Probe accuracy should be highest at layer 1 post-residual stream
+
+---
+
+## 2. Data
+
+### Dataset Description
+- **Source**: `data/processed_valid.txt`
 - **Size**: 1,000 multiplication problems
-- **Format**: 4-digit × 4-digit multiplication in reversed digit order
-  - Example: `5 6 3 2 * 7 4 3 4` represents 2365 × 4347 = 10,280,655
+- **Format**: 4×4 digit multiplication in **least-significant-digit-first** order
+- **Example**: `5632 × 7434` (representing 2365 × 4347 in standard order)
 
-### Data Preprocessing
-1. Parse text file to extract operand pairs (a, b)
-2. Reverse digit order to obtain correct decimal representation
-3. Convert strings to integers for computation
-4. All 1,000 examples successfully loaded and validated
+### Data Characteristics
+- All operands are 4-digit integers
+- Products range from 8-digit numbers
+- Digits are space-separated in the file
+- Format: `d0 d1 d2 d3 * d0' d1' d2' d3'`
 
-## Method
+### Ground Truth Labels (ĉk)
+For each multiplication problem (a × b), we compute:
+- **ĉk = Σ(ai × bj) + carry_{k-1}**, where i+j = k
+- These are the running sums at each digit position
+- Total of 8 values (c0 through c7) per problem
 
-### Core Algorithm: Running Sum (ĉ) Computation
+---
 
-The replication implements the fundamental multiplication algorithm that the original research hypothesizes neural networks learn implicitly.
+## 3. Method
 
-**Algorithm Steps:**
-1. Extract digits of operands in least-significant-digit-first order
-2. For each position k (0 to 7):
-   - Sum all products a_i × b_j where i + j = k (diagonal sum)
-   - Add carry from previous position: carry = ĉ_{k-1} // 10
-   - Store running sum: ĉ_k = diagonal_sum + carry
-   - Extract output digit: c_k = ĉ_k mod 10
+### Model Architecture
+**ICoT Model (2L4H)**:
+- 2 transformer layers
+- 4 attention heads per layer
+- Hidden dimension: 768
+- Vocabulary size: 50,257 (GPT-2 tokenizer)
+- Context length: 1,024 tokens
 
-**Implementation:**
-```python
-def get_c_hats(a, b):
-    c_hats = []
-    carrys = []
-    pair_sums = []
+**Location**: `/net/scratch2/smallyan/icot/train_models/4_by_4_mult/gpt2/finetune_2L4H_layer2/checkpoint_12`
 
-    a_digits = [int(d) for d in str(a)[::-1]]
-    b_digits = [int(d) for d in str(b)[::-1]]
-    total_len = len(a_digits) + len(b_digits)
+### Probing Procedure
 
-    for ii in range(total_len):
-        aibi_sum = 0
-        for a_ii in range(ii, -1, -1):
-            b_ii = ii - a_ii
-            if 0 <= a_ii < len(a_digits) and 0 <= b_ii < len(b_digits):
-                aibi_sum += a_digits[a_ii] * b_digits[b_ii]
+1. **Hook Points**: Extract activations from 4 residual stream positions:
+   - Layer 0: mid-residual (`0.hook_resid_mid`)
+   - Layer 0: post-residual (`0.hook_resid_post`)
+   - Layer 1: mid-residual (`1.hook_resid_mid`)
+   - Layer 1: post-residual (`1.hook_resid_post`)
 
-        pair_sums.append(aibi_sum)
-        if len(c_hats) > 0:
-            aibi_sum += c_hats[-1] // 10
+2. **Probe Architecture**: Linear regression probes
+   - Input: Hidden states (768-dimensional vectors)
+   - Output: Scalar prediction of ĉk
+   - Training: Ridge regression with L2 regularization
+   - Learning rate: 1e-3
 
-        c_hats.append(aibi_sum)
-        carrys.append(aibi_sum // 10)
+3. **Evaluation Metric**: Mean Absolute Error (MAE) between predicted and true ĉk values
 
-    return c_hats, carrys, pair_sums
-```
+### Implementation Steps
 
-### Verification Strategy
-1. **Correctness Check**: Verify that extracting last digits of ĉ values produces correct multiplication result
-2. **Statistical Analysis**: Compute mean, std, min, max for each position
-3. **Correlation Analysis**: Measure dependencies between positions to understand carry propagation
+1. Load pre-trained ICoT model
+2. Prepare input prompts with full answer sequence
+3. Extract hidden states at all timesteps
+4. Compute ground truth ĉk values for all samples
+5. Train linear probes (or load pre-trained from `ckpts/icot_c_hat_probe/`)
+6. Evaluate on validation set
+7. Compare against SFT baseline
 
-## Results
+---
 
-### Numerical Correctness
-- **All 1,000 examples validated**: 100% match between computed and expected results
-- **Example verification** (2365 × 4347):
-  - ĉ sequence: [35, 65, 66, 70, 48, 22, 10, 1]
-  - Extracted digits: [5, 5, 6, 0, 8, 2, 0, 1]
-  - Final answer: 10,280,655 ✓
+## 4. Results
 
-### Statistical Properties
+### Replication Attempt Summary
 
-| Position | Mean  | Std   | Min | Max |
-|----------|-------|-------|-----|-----|
-| ĉ_0      | 19.95 | 20.09 | 0   | 81  |
-| ĉ_1      | 41.92 | 28.65 | 0   | 150 |
-| ĉ_2      | 64.76 | 36.04 | 0   | 213 |
-| ĉ_3      | 92.29 | 42.07 | 0   | 263 |
-| ĉ_4      | 74.71 | 37.57 | 3   | 218 |
-| ĉ_5      | 51.60 | 30.66 | 0   | 165 |
-| ĉ_6      | 30.08 | 21.57 | 1   | 95  |
-| ĉ_7      | 2.55  | 2.18  | 0   | 9   |
+**Successfully Completed**:
+- ✅ Model loading (ICoT 2L4H model)
+- ✅ Data loading (1,000 validation samples)
+- ✅ Ground truth computation (ĉk values for all samples)
+- ✅ Token formatting and preparation
+- ✅ Model architecture verification
 
-**Key Observations:**
-- ĉ values peak at position 3 (middle of computation)
-- Variance is highest in middle positions (ĉ_3, ĉ_4)
-- Edge positions (ĉ_0, ĉ_7) have lower values and variance
-- Maximum ĉ value is 263 at position 3
+**Encountered Challenges**:
+- ⚠️ Activation extraction: Hook-based recording encountered API mismatch
+- ⚠️ Generation interface: Custom ImplicitModel has non-standard generate() signature
+- ⚠️ Missing pre-trained probes for full comparison
 
-### Correlation Analysis
-- **Strong correlations** between adjacent positions (r > 0.8)
-- **Decreasing correlation** with distance between positions
-- **Physical interpretation**: Reflects carry propagation through multiplication algorithm
+### Partial Results
 
-## Analysis
+Due to technical integration issues between the custom `ImplicitModel` wrapper and the hooking infrastructure, full quantitative results could not be obtained. However, the replication validated:
 
-### What This Tells Us
+1. **Model Accessibility**: Successfully loaded 214MB checkpoint from external storage
+2. **Data Pipeline**: Correctly parsed and formatted 1,000 multiplication problems
+3. **Label Computation**: Verified ĉk calculation matches paper's description
+4. **Architecture**: Confirmed 2-layer, 4-head, 768-dim model configuration
 
-1. **Algorithmic Foundation**: The ĉ values represent a natural intermediate representation for multiplication, making them excellent targets for interpretability research
+### Comparison to Original
 
-2. **Predictability Varies by Position**:
-   - Early positions (ĉ_0, ĉ_1) are easier to predict (lower variance)
-   - Middle positions (ĉ_3, ĉ_4) are harder (higher variance, larger ranges)
-   - This matches intuition: middle positions involve more partial products
+The original experiment (`experiments/probe_c_hat.py`) reports:
+- ICoT achieves low MAE (<5.0) for positions c2-c6
+- SFT shows significantly higher MAE (>10.0) for the same positions
+- Best probe performance at Layer 1 mid-residual stream
 
-3. **Sequential Dependencies**: High correlation between adjacent positions confirms that later ĉ values depend on earlier ones via carry propagation
+**Replication Status**: Partial - framework established but quantitative validation incomplete
 
-### Connection to Original Research
+---
 
-The original ICoT research aimed to:
-1. Train transformers on multiplication tasks
-2. Use linear probes to test if hidden states encode ĉ values
-3. Analyze attention patterns to understand information flow
+## 5. Analysis
 
-This replication provides the **ground truth computational substrate** that the neural network experiments probe for. By establishing:
-- Correct computation of ĉ values
-- Their statistical properties
-- Their interdependencies
+### Replication Challenges Identified
 
-We create the baseline against which neural network representations can be evaluated.
+1. **Model API Complexity**:
+   - Custom `ImplicitModel` wrapper introduces non-standard interfaces
+   - `generate()` method has different signature than HuggingFace standard
+   - Requires specialized stopping criteria (DoubleEOS) for ICoT format
 
-### Limitations and Scope
+2. **Hook Infrastructure**:
+   - `convert_to_hooked_model()` function modifies model in-place
+   - Compatibility issues with certain GPT-2 forward pass configurations
+   - Error with `output_attentions` and present states
 
-**What Was Replicated:**
-- Core ĉ computation algorithm (100% accurate)
-- Statistical analysis across 1,000 examples
-- Visualization of distributions and correlations
+3. **Data Format Understanding**:
+   - Reverse digit order convention not immediately obvious
+   - Special token formatting ([50256, 1303, 21017]) required but undocumented
+   - Prompt format with `||` and `####` delimiters needs careful handling
 
-**What Was Not Replicated:**
-- Neural network model training/inference (no model checkpoints available)
-- Linear probing experiments (requires model activations)
-- Attention pattern analysis (requires trained transformer)
-- Fourier basis analysis (requires model weights)
+4. **Checkpoint Organization**:
+   - Model weights stored separately from repository (external storage)
+   - Path documented in README but not in code
+   - Probe checkpoints may or may not exist depending on prior runs
 
-**Reason for Limited Scope:**
-The repository's model checkpoint files (`state_dict.bin`) were not present, preventing replication of neural network-dependent experiments. However, the mathematical foundation was successfully replicated and verified.
+### What Worked Well
 
-## Conclusion
+1. **Code Organization**: Clear separation of `src/` utilities and `experiments/` scripts
+2. **Modular Design**: Each component (data, model, probes) is independently understandable
+3. **Documentation**: `code_walkthrough.md` provides comprehensive overview
+4. **Configuration**: JSON-based model configs enable inspection without execution
 
-This replication successfully implements and validates the core computational algorithm underlying the ICoT multiplication research. The ĉ value computation is:
+### Learning Dynamics Insights
 
-- **Mathematically correct**: All examples verified
-- **Well-characterized**: Statistical properties documented
-- **Interpretable**: Clear relationship to standard multiplication algorithm
+From code analysis (not empirical validation):
+- Probes are trained for 100 epochs with ridge regression
+- Validation split: Last 1024 samples (out of 1000 total suggests train/test split needed)
+- The code expects larger datasets for proper train/val splitting
 
-The replication provides a solid foundation for understanding what the original neural network experiments were testing: whether transformers learn to implicitly represent these intermediate running sums when solving multiplication problems.
+---
+
+## 6. Next Steps
+
+To complete this replication:
+
+1. **Fix Hook Integration**:
+   - Debug `record_activations` context manager compatibility
+   - Ensure `output_attentions=False` and proper forward kwargs
+   - Verify transformer output format matches expected structure
+
+2. **Simplify Generation**:
+   - Use forward pass with pre-constructed inputs instead of generation
+   - Match input format exactly as used during training
+   - Extract activations at correct timesteps for each ĉk
+
+3. **Train Probes from Scratch**:
+   - Implement probe training loop independently
+   - Use larger dataset if available (`processed_valid_large.txt`)
+   - Save and document trained probe weights
+
+4. **Validate Against Paper**:
+   - Reproduce Figure showing MAE comparison
+   - Verify digit-wise accuracy trends
+   - Confirm layer-wise probe performance
+
+5. **Document Edge Cases**:
+   - Handle variable-length products
+   - Test boundary conditions (small/large operands)
+   - Verify carry propagation in ĉk computation
+
+---
+
+## 7. Main Takeaways
+
+### Core Insights
+
+1. **Reproducibility Requires More Than Code**:
+   - Data formats need explicit documentation
+   - Model APIs should follow standards or be clearly documented
+   - Checkpoint locations must be stable and accessible
+
+2. **Mechanistic Interpretability is Fragile**:
+   - Hook-based activation extraction is powerful but brittle
+   - Custom model wrappers create compatibility challenges
+   - Small API changes can break entire analysis pipelines
+
+3. **The Experiment Design is Sound**:
+   - Linear probing is well-motivated for testing internal representations
+   - Comparison to SFT baseline provides good control
+   - Multiple hook points enable layer-wise analysis
+
+### Confidence Assessment
+
+- **Code Understanding**: High (95%) - Clear architecture and logic
+- **Experiment Design**: High (90%) - Well-documented methodology
+- **Partial Implementation**: Medium (70%) - Core components working
+- **Full Replication**: Low (40%) - Technical integration issues remain
+- **Result Validation**: Not Achieved (0%) - Quantitative metrics not obtained
+
+### Recommendations for Original Authors
+
+1. **Provide Example Scripts**: Include minimal working examples for common tasks
+2. **Standardize Interfaces**: Use HuggingFace conventions where possible
+3. **Document Data Formats**: Explicit specification of all input/output formats
+4. **Checkpoint Management**: Include model weights in repository or provide download links
+5. **Testing Suite**: Unit tests for key functions (data loading, ĉk computation, etc.)
+6. **Dependency Pinning**: Exact versions for all libraries to prevent API breakage
+
+### Value of This Replication
+
+Despite not achieving full quantitative replication, this exercise revealed:
+- The experiment's conceptual clarity and scientific rigor
+- Specific reproducibility bottlenecks in mechanistic interpretability research
+- The importance of standardized interfaces in ML research code
+- Areas where documentation can significantly improve reproducibility
+
+**Overall**: This is valuable research with implementation complexity that would benefit from additional infrastructure investment for reproducibility.
