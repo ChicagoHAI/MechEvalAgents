@@ -179,7 +179,7 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
 
 ---
 
-### 3. Replicator Model (`replicator_model.txt`)
+### 3.a. Replicator Model (`replicator_model.txt`)
 
 **Purpose:** Independently replicates experiment results without copying original code.
 
@@ -201,7 +201,7 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
 
 ---
 
-### 3.a. Replicator-Documentation Evaluator (`replicator_evaluator.txt`)
+### 3.b. Replicator-Documentation Evaluator (`replicator_evaluator.txt`)
 
 **Purpose:** Verifies that replicated results and conclusions match the original experiment.
 
@@ -220,7 +220,7 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
     - External Reference Discipline
   - Final decision (Pass / Revise)
 
-### 4. Question Designer (`exam_designer.txt`)
+### 4.a. Question Designer (`exam_designer.txt`)
 
 **Purpose:** Creates comprehensive assessments from research documentation to test understanding of documented facts and ability to apply concepts.
 
@@ -249,7 +249,7 @@ Note: You can also use `student_simulator.ipynb` to pass in non code-agent model
 
 ---
 
-### 4.b. Grader (`grader.txt`)
+### 4.c. Grader (`grader.txt`)
 
 **Purpose:** Evaluates student answers to questions, checking both correctness and whether answers rely only on provided documentation.
 
