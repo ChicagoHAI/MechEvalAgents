@@ -2,15 +2,15 @@
 
 ## Typical Evaluation Pipeline
 
-* **Exam** 
-    * **Exam Designer** creates assessment questions from documentation
-    * **Student** (or model) answers the exam
-    * **Exam Grader** evaluates answers and detects external references
 * **Instruction Following Evaluator** checks goal alignment and hypothesis testing
 * **Consistency Evaluator** verifies code correctness and result-conclusion matching
 * **Replication**
     * **Replicator** independently replicates the experiment
     * **Replicator-Documentation Evaluator** verifies replication fidelity
+* **Exam** 
+    * **Exam Designer** creates assessment questions from documentation
+    * **Student** (or model) answers the exam
+    * **Exam Grader** evaluates answers and detects external references
 
 ## Implementation
 
@@ -266,4 +266,14 @@ Note: You can also use `student_simulator.ipynb` to pass in non code-agent model
 ## Notices
 The evaluations will be in the repo you want to evaluate. There will be another copied saved in another dir under runs. 
 
+## Citation
+If you find our repo helpful, please cite:
+```
+@software{mechinterp_evaluate_agent,
+  title={MechEvalAgents: Grounded Evaluation of Research Agents in Mechanistic Interpretability},
+  author={Xiaoyan Bai},
+  year={2025},
+  url={https://github.com/ChicagoHAI/MechEvalAgents}
+}
+```
 
