@@ -1,9 +1,16 @@
 # Evaluation Pipeline for Automated MechInterp Research
 
-## Typical Evaluation Pipeline
+## Unified Research Agent Outputs
+We argue that research agents should produce a unified set of outputs, organized around the same scientific reasoning process that humans follow.  A research trace should include:
+* **Plan** outlining the hypothesis, methodology, and expected outcomes.
+* **Code Implementation** that executes the plan and produces interpretable intermediate outputs.
+* **Code Walkthrough** explaining how the code works and how to run it.
+* **Research Report** documenting the goal, data, methods, results, analysis, and final conclusions.
 
-* **Instruction Following Evaluator** checks goal alignment and hypothesis testing
+## Evaluation Pipeline
+
 * **Consistency Evaluator** verifies code correctness and result-conclusion matching
+* **Instruction Following Evaluator** checks goal alignment and hypothesis testing
 * **Replication**
     * **Replicator** independently replicates the experiment
     * **Replicator-Documentation Evaluator** verifies replication fidelity
@@ -130,31 +137,11 @@ This evaluates:
 
 ### Required Input Files
 
-Each research project requires four types of files:
-- **Plan** - Experiment goals and design
-- **Implementation code** - Source code implementing the experiment
-- **Code walkthrough** - Detailed explanation of the code (code_walk.md or equivalent)
-- **Documentation** - Research report summarizing goals, methods, results, and conclusions
+The input of our evaluation pipeline is [unified outputs](#unified-research-agent-outputs) of research agents.
 
 **Note:** We recommend using Jupyter notebooks for implementation to enable better quantitative analysis by the Consistency Evaluator. 
 
-
-### 1. Instruction Following Evaluator (`instruction_following.txt`)
-
-**Purpose:** Evaluates whether student project aligns with instructor's goals and tests stated hypotheses.
-
-**Input**: plan + implementaiton code + code walkthrough + documentation + original instructions
-
-**Output Directory:** `evaluation/`
-
-**Output Files:**
-- `goal_matching.ipynb` - Assessment of alignment between student goals and instructor goals
-- `hidden_test.ipynb` - Test cases verifying neurons match hypothesized functions
-- `eval_summary_ts.ipynb` - Short summary of the evaluation
-
----
-
-### 2. Consistency Evaluator (`consistency_evaluation.txt`)
+### 1. Consistency Evaluator (`consistency_evaluation.txt`)
 
 **Purpose:** Evaluates code correctness, checks result-conclusion consistency, and assesses plan adherence.
 
@@ -172,6 +159,20 @@ Each research project requires four types of files:
 - `self_matching.ipynb` - Verification that conclusions match implementation results
 - `matching_report` - Report on plan-implementation alignment
 - `eval_summary_self.ipynb` - Short evaluation summary
+
+
+### 2. Instruction Following Evaluator (`instruction_following.txt`)
+
+**Purpose:** Evaluates whether student project aligns with instructor's goals and tests stated hypotheses.
+
+**Input**: plan + implementaiton code + code walkthrough + documentation + original instructions
+
+**Output Directory:** `evaluation/`
+
+**Output Files:**
+- `goal_matching.ipynb` - Assessment of alignment between student goals and instructor goals
+- `hidden_test.ipynb` - Test cases verifying neurons match hypothesized functions
+- `eval_summary_ts.ipynb` - Short summary of the evaluation
 
 ---
 
@@ -242,6 +243,7 @@ Each research project requires four types of files:
 - `student_answer.ipynb`: all the answers to the questions
 
 Note: You can also use `student_simulator.ipynb` to pass in non code-agent model by using your API key.
+
 ---
 
 ### 4.b. Exam Grader (`grader.txt`)
