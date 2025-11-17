@@ -1,7 +1,7 @@
 # MechEvalAgent: Grounded Evaluation of Research Agents in Mechanistic Interpretability
 
 We introduce MechEvalAgents as the first step towards rethinking research evaluation.
-<img width="901" height="505" alt="Screenshot 2025-11-16 at 21 54 24" src="https://github.com/user-attachments/assets/85c1e4f2-96d9-4997-b569-85d51ea0613d" />
+<img width="895" height="497" alt="Screenshot 2025-11-17 at 13 09 37" src="https://github.com/user-attachments/assets/d9cb45b0-bc99-4f9f-bc4c-318b005911eb" />
 
 ## Unified Research Agent Outputs
 We argue that research agents should produce a unified set of outputs, organized around the same scientific reasoning process that humans follow.  A research trace should include:
@@ -17,16 +17,16 @@ We argue that research agents should produce a unified set of outputs, organized
 * **Replication**
     * **Replicator** independently replicates the experiment
     * **Replicator-Documentation Evaluator** verifies replication fidelity
-* **Exam** 
-    * **Exam Designer** creates assessment questions from documentation
-    * **Student** (or model) answers the exam
-    * **Exam Grader** evaluates answers and detects external references
+* **Generalization** 
+    * **Question Designer** creates assessment questions from documentation
+    * **Student** (or model) answers the questions
+    * **Grader** evaluates answers and detects external references
 
 ## Implementation
 
 The pipeline uses two main scripts:
 - **`run_experiment.sh`** - For running initial experiments
-- **`run_critic.sh`** - For running all evaluations, exams, replications, and grading
+- **`run_critic.sh`** - For running all evaluations, questions, replications, and grading
 
 ### Common Options
 
@@ -68,7 +68,7 @@ This creates filled prompt templates in `prompts/<task_name>/` for the evaluator
 
 ### Step 3: Run Critic Evaluations
 
-Use `run_critic.sh` to run consistency evaluation, instruction following, exam design, and replication:
+Use `run_critic.sh` to run consistency evaluation, instruction following, question design, and replication:
 
 ```bash
 ./run_critic.sh --prompts prompts/<task_name>/consistency_evaluation.txt,prompts/<task_name>/instruction_following.txt,prompts/<task_name>/exam_designer.txt,prompts/<task_name>/replicator_model.txt
@@ -83,7 +83,7 @@ Choose the appropriate instruction following prompt based on your task:
 This step generates:
 - Consistency evaluation results (`evaluation/`)
 - Instruction following evaluation (`evaluation/`)
-- Exam files for testing understanding (`exam/`)
+- Question files for testing understanding (`exam/`)
 - Replication attempts (`evaluations/replications/`)
 
 ### Step 4: Construct Student and Replicator Evaluator Prompts
@@ -108,7 +108,7 @@ python evaluation_prompt_construct.py \
 
 ### Step 5: Run Student Evaluation
 
-Use `run_critic.sh` to have coding agents complete the exam:
+Use `run_critic.sh` to have coding agents complete the question:
 
 ```bash
 ./run_critic.sh --prompts prompts/<task_name>/student.txt
@@ -133,7 +133,7 @@ Use `run_critic.sh` for final grading and replicator evaluation:
 ```
 
 This evaluates:
-- Student exam answers using the Exam Grader (`exam/grade/`)
+- Student's answers using the Grader (`exam/grade/`)
 - Replication fidelity using the Replicator-Documentation Evaluator (`evaluations/replication/`)
 
 ## Evaluation Processes and Output Files
@@ -220,7 +220,7 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
     - External Reference Discipline
   - Final decision (Pass / Revise)
 
-### 4. Exam Designer (`exam_designer.txt`)
+### 4. Question Designer (`exam_designer.txt`)
 
 **Purpose:** Creates comprehensive assessments from research documentation to test understanding of documented facts and ability to apply concepts.
 
@@ -230,7 +230,7 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
 
 **Output Files:**
 - `exam_documentation.ipynb` - Notebook containing generated questions and gold answers
-- `exam_{task_name}.json` - Structured exam data in JSON format
+- `exam_{task_name}.json` - Structured question data in JSON format
   - Contains: question type (multiple-choice or free-generation), question text, correct answer, choices (if applicable), and reference to documentation section
 
 ---
@@ -238,7 +238,7 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
 
 **Purpose:** take the test
 
-**Input**: documentation + exam
+**Input**: documentation + question
 
 **Output Directory:** `exam/`
 
@@ -249,11 +249,11 @@ Note: You can also use `student_simulator.ipynb` to pass in non code-agent model
 
 ---
 
-### 4.b. Exam Grader (`grader.txt`)
+### 4.b. Grader (`grader.txt`)
 
-**Purpose:** Evaluates student answers to exams, checking both correctness and whether answers rely only on provided documentation.
+**Purpose:** Evaluates student answers to questions, checking both correctness and whether answers rely only on provided documentation.
 
-**Input**: exam + student's answers + documentation
+**Input**: questions + student's answers + documentation
 
 **Output Directory:** `exam/grade/`
 
