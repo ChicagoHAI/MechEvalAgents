@@ -1,6 +1,7 @@
 # MechEvalAgent: Grounded Evaluation of Research Agents in Mechanistic Interpretability
 
 We introduce MechEvalAgents as the first step towards rethinking research evaluation.
+<img width="901" height="505" alt="Screenshot 2025-11-16 at 21 54 24" src="https://github.com/user-attachments/assets/85c1e4f2-96d9-4997-b569-85d51ea0613d" />
 
 ## Unified Research Agent Outputs
 We argue that research agents should produce a unified set of outputs, organized around the same scientific reasoning process that humans follow.  A research trace should include:
