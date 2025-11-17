@@ -1,4 +1,6 @@
-# Evaluation Pipeline for Automated MechInterp Research
+# MechEvalAgent: Grounded Evaluation of Research Agents in Mechanistic Interpretability
+
+We introduce MechEvalAgents as the first step towards rethinking research evaluation.
 
 ## Unified Research Agent Outputs
 We argue that research agents should produce a unified set of outputs, organized around the same scientific reasoning process that humans follow.  A research trace should include:
