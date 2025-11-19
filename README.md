@@ -71,7 +71,7 @@ This creates filled prompt templates in `prompts/<task_name>/` for the evaluator
 Use `run_critic.sh` to run consistency evaluation, instruction following, question design, and replication:
 
 ```bash
-./run_critic.sh --prompts prompts/<task_name>/consistency_evaluation.txt,prompts/<task_name>/instruction_following.txt,prompts/<task_name>/exam_designer.txt,prompts/<task_name>/replicator_model.txt
+./run_critic.sh --prompts prompts/<task_name>/consistency_evaluation.txt,prompts/<task_name>/instruction_following.txt,prompts/<task_name>/question_designer.txt,prompts/<task_name>/replicator_model.txt
 ```
 
 **Important: Instruction Following Variants**
@@ -220,7 +220,7 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
     - External Reference Discipline
   - Final decision (Pass / Revise)
 
-### 4.a. Question Designer (`exam_designer.txt`)
+### 4.a. Question Designer (`question_designer.txt`)
 
 **Purpose:** Creates comprehensive assessments from research documentation to test understanding of documented facts and ability to apply concepts.
 
