@@ -1,0 +1,11 @@
+einops
+fancy-einsum
+matplotlib
+numpy
+openai
+pandas
+plotly
+scikit-learn
+torch
+transformers
+tqdm
