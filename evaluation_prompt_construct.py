@@ -18,7 +18,8 @@ def fill_evaluation_prompts(repo_path, task_name, system_prompt_path=None, repli
 
     evaluation_prompts = [
         "consistency_evaluation.txt",
-        "exam_designer.txt",
+        "code_evaluation.txt",
+        "question_designer.txt",
         "instruction_following.txt",
         "replicator_model.txt",
         "grader.txt"
