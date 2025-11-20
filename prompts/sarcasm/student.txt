@@ -10,7 +10,7 @@ Here is the documentation:
 /home/smallyan/critic_model_mechinterp/runs/circuits_claude_2025-11-10_20-48-00/logs/documentation.md
 
 Here is the exam question:
-/home/smallyan/critic_model_mechinterp/runs/circuits_claude_2025-11-10_20-48-00/exam
+/home/smallyan/critic_model_mechinterp/runs/circuits_claude_2025-11-10_20-48-00/question/question_sarcasm_circuit_student_version.json
 
 You must write **all answers in a Jupyter notebook**.
 
@@ -33,5 +33,5 @@ Answer: <your final answer>
 
 Think carefully. Do not hallucinate. If you genuinely do not know the answer from the documentation, clearly state that.
 
-### Output file (Please strictly follow my naming and you should output in a exam/ dir under the parent directory of the documentation file given to you)
+### Output file (Please strictly follow my naming and you should output in a question/ dir under the parent directory of the documentation file given to you)
 student_answer.ipynb: all the answers to the questions. 

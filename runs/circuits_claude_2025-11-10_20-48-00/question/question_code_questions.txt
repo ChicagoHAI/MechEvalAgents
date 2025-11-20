@@ -1,0 +1,20 @@
+[code_id]: CQ1
+Title: Verify Write Budget Calculation
+Prompt: Write code to verify the write budget calculation for the sarcasm circuit. Given the circuit composition (1 input embedding, 10 MLPs, 43 attention heads), compute the total write cost and verify it matches the documented 11,200 dimension budget.
+Expected_Outcome: Total write cost = 11,200 dimensions (Input: 768, MLPs: 7,680, Attention: 2,752). Budget verification should return True.
+Reference: Section 3 Method - Write Budget Calculation and Section 4 Results - Circuit Composition
+---
+
+[code_id]: CQ2
+Title: Analyze Attention Head Distribution by Layer
+Prompt: Write code to analyze the distribution of the 43 attention heads in the sarcasm circuit across the 12 layers (0-11). Parse head names to extract layer numbers, count heads per layer, and group into three stages (Early L0-L3, Middle L4-L7, Late L8-L11).
+Expected_Outcome: Stage totals - Early: 9 heads, Middle: 19 heads, Late: 15 heads. Total: 43 heads. All verification checks should return True.
+Reference: Section 4 Results - Attention Head Components - Distribution by Layer
+---
+
+[code_id]: CQ3
+Title: Analyze MLP vs Attention Head Contribution
+Prompt: Write code to analyze the relative contribution of MLPs versus attention heads to the sarcasm circuit in terms of dimensions. Calculate percentages of total non-input dimensions.
+Expected_Outcome: MLP: 7,680 dims (73.6%), Attention: 2,752 dims (26.4%). Conclusion: Circuit is MLP-dominant.
+Reference: Section 5 Analysis - Comparison to IOI Circuit and Section 7 Main Takeaways
+---

@@ -1,0 +1,158 @@
+# Large Circuit Tracing Experiment — Sarcasm Circuit
+
+## PLAN FILE — DO NOT MODIFY
+
+### ROLE
+
+You are a **senior mechanistic interpretability researcher**.
+
+### MODEL AND DATA
+
+* Use model: **gpt2-small** loaded via **HookedTransformer**.
+* Use dataset: **mib-bench/sarcasm** (synthetic or real sarcasm-labeled sentences).
+* Ignore files under `runs/`.
+
+---
+
+### GOAL
+
+Identify a **precise circuit**—a subset of attention heads and MLPs—that reproduces the model’s **sarcasm recognition behavior** as faithfully as possible while obeying strict **residual write-budget constraints**.
+
+---
+
+### TASK DESCRIPTION
+
+A sentence in the sarcasm dataset typically contains **contradictory affective cues** between literal meaning and tone.
+Example:
+
+> “Oh great, another meeting at 7 AM.”
+
+The model must infer that the **true meaning** is **negative** despite **positive surface sentiment**.
+
+Key phenomena:
+
+* **Literal sentiment** (surface meaning from adjectives/adverbs).
+* **Contextual reversal** (tone or incongruity detection).
+* **Pragmatic cues** (contrast, exaggeration, or absurdity).
+
+Your job is to find **the mechanism** by which the model internally resolves this contradiction.
+
+---
+
+### HYPOTHESIS, TESTING, AND REFINEMENT LOOP
+
+Follow an **iterative workflow** similar to IOI but specialized for sarcasm detection:
+
+#### Phase 1 — Initial Hypothesis
+
+1. Formulate an **initial hypothesis** about which components might detect or invert literal sentiment:
+
+   * Early layers may encode **sentiment direction** (positive/negative polarity).
+   * Mid layers may encode **tone or incongruity**.
+   * Later layers may perform **meaning reversal** or **contextual correction**.
+2. Record this hypothesis and your experimental outline in **`logs/plan_v1.md`** and **`notebooks/plan_v1_Md.ipynb`**:
+
+   * Describe expected behaviors (e.g., “a5.h8 attends to sentiment word; m7 flips polarity when context contradicts it”).
+   * Include what evidence would confirm or reject each sub-hypothesis.
+
+#### Phase 2 — Testing the Hypothesis
+
+1. Use probing, activation patching, or causal tracing to identify which nodes contribute to sarcasm detection accuracy.
+
+   * Compare model predictions on sarcastic vs. literal pairs (e.g., “Great job.” vs. “Oh great, you broke it again.”).
+2. Save your analysis code and results for reproducibility.
+
+#### Phase 3 — Refinement
+
+1. Based on observed activation patterns or ablation results, refine your hypothesis:
+
+   * Identify which heads detect sentiment polarity.
+   * Identify which MLPs flip or suppress literal meanings when sarcasm is present.
+2. Write updates in `logs/plan_v2.md`, `logs/plan_v3.md`, etc.
+3. Repeat until your circuit:
+
+   * Reproduces sarcasm detection reliably,
+   * Stays within the write budget (≤ 11,200),
+   * Contains interpretable, minimal components.
+
+---
+
+### SRC_NODES
+
+Same as in IOI:
+
+```
+[
+  'input',
+  'a0.h0','a0.h1',...,'a11.h11',
+  'm0','m1',...,'m11'
+]
+```
+
+---
+
+### CONSTRAINTS
+
+* Must generate a plan before implementation and update after each refinement.
+* Each attention head writes `d_model / n_heads` dimensions.
+* Each MLP writes `d_model` dimensions.
+* **Total writes ≤ 11,200.**
+* Only include nodes from `src_nodes`.
+* Node names must follow `a{layer}.h{head}`, `m{layer}`, or `input`.
+
+---
+
+### EXPECTED OUTPUTS
+
+**Final Circuit File**
+
+```json
+{
+  "nodes": ["{An example sarcastic sentence}", "a4.h3", "m6", ...]
+}
+```
+
+Validation:
+
+* All nodes are in `src_nodes`.
+* Total writes ≤ 11,200.
+* Naming consistent.
+
+---
+
+### FILES TO PRODUCE
+
+**Logs (Markdown):**
+
+* `logs/plan_v1.md`, `logs/plan_v2.md`, …
+* `logs/documentation.md`
+* `logs/code_walk.md`
+
+**Notebooks:**
+
+* `notebooks/plan_v1_Md.ipynb`, `notebooks/plan_v2_Md.ipynb`, …
+* `notebooks/documentation_Md.ipynb`
+* `notebooks/code_walk_Md.ipynb`
+
+---
+
+### DOCUMENTATION REQUIREMENTS
+
+`logs/documentation.md` must include:
+
+1. **Goal** — Describe hypothesis evolution for sarcasm detection.
+2. **Data** — Example sarcastic and non-sarcastic sentences.
+3. **Method** — Probing, patching, ablation details.
+4. **Results** — Final circuit list, metrics before/after pruning.
+5. **Analysis** — Evolution of the circuit understanding.
+6. **Next Steps** — Open questions about tone, irony, and affect modeling.
+7. **Main Takeaways** — What this circuit reveals about how sarcasm is encoded.
+
+---
+
+### OUTPUT SUMMARY
+
+* `real_circuits_1.json` — final node list.
+* `logs/` — documentation, plan iterations, code walkthrough.
+* `notebooks/` — supporting experiment notebooks.
+* Optional — visualization of attention/causal patterns revealing sentiment reversal.

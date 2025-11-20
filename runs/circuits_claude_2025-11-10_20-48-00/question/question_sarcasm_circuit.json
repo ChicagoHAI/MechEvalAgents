@@ -1,0 +1,167 @@
+[
+  {
+    "question_type": "multiple_choice",
+    "question": "What is the dimension of a single attention head (d_head) in GPT2-small as used in this sarcasm circuit analysis?",
+    "answer": "D. 64 dimensions",
+    "choice": [
+      "A. 32 dimensions",
+      "B. 128 dimensions",
+      "C. 768 dimensions",
+      "D. 64 dimensions"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 3 Method - Technical Details"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "How many total components are included in the identified sarcasm detection circuit?",
+    "answer": "B. 54 components (1 input + 10 MLPs + 43 attention heads)",
+    "choice": [
+      "A. 44 components (1 input + 12 MLPs + 31 attention heads)",
+      "B. 54 components (1 input + 10 MLPs + 43 attention heads)",
+      "C. 64 components (1 input + 12 MLPs + 51 attention heads)",
+      "D. 24 components (1 input + 10 MLPs + 13 attention heads)"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4 Results - Circuit Composition"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "Which MLP layer is identified as the primary sarcasm detector with the highest differential activation?",
+    "answer": "B. m2 (Layer 2 MLP) with 32.47 average differential activation",
+    "choice": [
+      "A. m0 (Layer 0 MLP) with 7.33 average differential activation",
+      "B. m2 (Layer 2 MLP) with 32.47 average differential activation",
+      "C. m11 (Layer 11 MLP) with 22.30 average differential activation",
+      "D. m5 (Layer 5 MLP) with 7.79 average differential activation"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4 Results - MLP Components"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Which two MLP layers were excluded from the sarcasm circuit? Explain why they were excluded based on the documentation.",
+    "answer": "MLP layers m3 and m4 were excluded from the sarcasm circuit. According to the documentation, they showed minimal differential activation (less than 6.5), suggesting that these layers are less involved in sarcasm-specific processing compared to other MLP layers. This indicates that not all layers contribute equally to sarcasm detection, with m3 and m4 potentially performing more general language modeling tasks rather than sarcasm-specific computations.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4 Results - Excluded Components"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The initial hypothesis suggested that sarcasm detection follows a three-stage process: sentiment encoding \u2192 incongruity detection \u2192 meaning reversal. How did the empirical findings revise this understanding? Explain the key differences between the original hypothesis and the observed mechanism.",
+    "answer": "The empirical findings significantly revised the initial hypothesis in two key ways:\n\n1. **Timing of Detection**: The original hypothesis predicted that incongruity detection would occur in middle layers (L4-L7). However, the empirical evidence revealed that the primary sarcasm detection happens much earlier, at Layer 2 MLP (m2), which showed dramatically dominant differential activation (32.47). This means the network 'decides' whether text is sarcastic at L2, not gradually through middle layers.\n\n2. **Mechanism in Late Layers**: The original hypothesis predicted that late layers (L8-L11) would perform 'meaning reversal' - flipping sentiment polarity when sarcasm is detected. The revised understanding shows that late layers actually perform 'integration' rather than reversal - they don't flip sentiment but instead integrate the early detection signal into the output representation. The late MLPs and Layer 11 attention heads work to incorporate the sarcasm signal detected by m2 into the final prediction.\n\nIn summary, the detection is earlier than expected (L2 vs middle layers) and the process is integration rather than reversal.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 5 Analysis - Hypothesis Evolution"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "How does the sarcasm circuit differ from the Indirect Object Identification (IOI) circuit in terms of the dominant component type?",
+    "answer": "D. Sarcasm circuit is MLP-dominant while IOI circuit is attention-dominant",
+    "choice": [
+      "A. Both circuits are equally balanced between MLPs and attention",
+      "B. IOI circuit is MLP-dominant while sarcasm circuit is attention-dominant",
+      "C. Both circuits are primarily attention-dominant",
+      "D. Sarcasm circuit is MLP-dominant while IOI circuit is attention-dominant"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 5 Analysis - Comparison to IOI Circuit"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Identify the two most important attention heads in the sarcasm circuit based on differential activation. What is their interpreted function according to the documentation?",
+    "answer": "The two most important attention heads are:\n\n1. **a11.h8** with 3.33 average differential activation\n2. **a11.h0** with 2.74 average differential activation\n\nBoth heads are located in Layer 11 and are interpreted as 'output integration heads.' Their function is to integrate the processed sarcasm signal into the final representation, determining how the detected sarcasm affects final token predictions. They are critical for the third stage (Final Integration) of the three-stage hierarchical processing model.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4 Results - Attention Head Components"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Based on the documentation, explain the key linguistic features that characterize sarcastic sentences in the dataset. How does the combination of these features create the contradiction that the circuit must detect?",
+    "answer": "The key linguistic features that characterize sarcastic sentences are:\n\n1. **Discourse markers**: Words like 'Oh', 'Wow', 'Just' (emphasis particles) that signal non-literal intent\n\n2. **Positive sentiment words**: Words like 'great', 'love', 'fantastic', 'wonderful', 'perfect' that express positive emotion\n\n3. **Negative situational context**: Phrases describing objectively negative situations like 'another meeting', 'stuck in traffic', 'crashed'\n\nThe contradiction arises from the combination of these features: positive sentiment words are used to describe objectively negative situations. For example, 'Oh great, another meeting at 7 AM' uses the positive word 'great' combined with the discourse marker 'Oh' to describe the negative situation of an early morning meeting. The circuit must detect this incongruity between the positive literal sentiment and the negative contextual reality to correctly identify the text as sarcastic. This is why m2 (Layer 2 MLP) functions as an incongruity detector - it processes patterns where positive adjectives are combined with negative situational contexts.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 2 Data - Key Linguistic Features of Sarcasm"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "If you wanted to include all 12 MLPs and all 144 attention heads (12 layers \u00d7 12 heads) in a circuit for GPT2-small, calculate the total write cost. Would this exceed the 11,200 dimension budget? Show your calculation.",
+    "answer": "Let's calculate the total write cost:\n\n**Input embedding**: 768 dimensions\n\n**All 12 MLPs**: 12 \u00d7 768 = 9,216 dimensions\n\n**All 144 attention heads**: 144 \u00d7 64 = 9,216 dimensions\n\n**Total write cost**: 768 + 9,216 + 9,216 = **19,200 dimensions**\n\n**Comparison to budget**: 19,200 > 11,200\n\nYes, this would exceed the 11,200 dimension budget by 8,000 dimensions (71% over budget). This is why the circuit discovery process must select a subset of components - the budget constraint forces identification of the most important components for sarcasm detection rather than including everything. The actual circuit uses 54 components with exactly 11,200 dimensions (100% budget utilization).",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 3 Method - Write Budget Calculation"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "According to the revised mechanistic model, what is the primary function of the middle layers (L3-L7) in the sarcasm circuit?",
+    "answer": "C. Distributed propagation - refining and routing the sarcasm signal across sequence positions",
+    "choice": [
+      "A. Primary incongruity detection - identifying contradictions between sentiment and context",
+      "B. Sentiment encoding - detecting and encoding literal sentiment words",
+      "C. Distributed propagation - refining and routing the sarcasm signal across sequence positions",
+      "D. Meaning reversal - flipping sentiment polarity when sarcasm is detected"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 5 Analysis - Mechanistic Interpretation"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What normalization technique was used to handle variable-length inputs when computing differential activations?",
+    "answer": "B. Averaged activations over sequence positions (mean over sequence dimension)",
+    "choice": [
+      "A. Max pooling over sequence positions",
+      "B. Averaged activations over sequence positions (mean over sequence dimension)",
+      "C. Used only the last token's activation",
+      "D. Padded all sequences to the same length"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 3 Method - Technical Details"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The documentation lists several limitations of the study. Why is the distinction between 'differential activation' and 'causal importance' considered a significant limitation? Explain what additional experiments would be needed to establish causal importance.",
+    "answer": "The distinction between differential activation and causal importance is significant because:\n\n**Differential activation** only measures how differently a component activates on sarcastic vs. literal text. A high differential does not necessarily mean the component is causally responsible for the sarcasm detection behavior - it could be epiphenomenal (correlated but not causal).\n\n**Causal importance** requires demonstrating that the component's contribution actually changes the model's behavior.\n\nTo establish causal importance, the following additional experiments would be needed:\n\n1. **Ablation testing**: Systematically remove each component (by zeroing or mean-ablating its output) and measure the impact on sarcasm detection accuracy. If accuracy drops significantly when a component is removed, it has causal importance.\n\n2. **Intervention experiments**: Patch activations from one example to another. For instance, take the activation from a literal sentence and patch it into a sarcastic sentence - if this changes the model's prediction, the component is causally important.\n\n3. **Activation patching**: Test if restoring just the circuit components (while ablating everything else) is sufficient to reproduce the sarcasm detection behavior.\n\n4. **Probing**: Train linear classifiers to detect sarcasm at each layer to verify when the relevant information becomes available.\n\nWithout these experiments, we cannot be certain that the 54 components identified are all necessary and sufficient for sarcasm detection.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 8 Limitations and Section 6 Next Steps"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Write code to verify the write budget calculation for the sarcasm circuit. Given the circuit composition (1 input embedding, 10 MLPs, 43 attention heads), compute the total write cost and verify it matches the documented 11,200 dimension budget.\n\nYour code should:\n1. Define the dimension sizes (d_model=768 for input/MLPs, d_head=64 for attention heads)\n2. Calculate the individual costs for each component type\n3. Calculate the total write cost\n4. Print the breakdown and verify it equals 11,200\n\nExpected output should show the individual costs and confirm the total equals 11,200.",
+    "answer": "The code should compute:\n- Input embedding: 1 \u00d7 768 = 768 dimensions\n- MLPs: 10 \u00d7 768 = 7,680 dimensions  \n- Attention heads: 43 \u00d7 64 = 2,752 dimensions\n- Total: 768 + 7,680 + 2,752 = 11,200 dimensions\n\nThe total matches the documented budget of 11,200 dimensions (100% utilization).",
+    "choice": null,
+    "requires_code": true,
+    "code_id": "CQ1",
+    "reference": "Section 3 Method - Write Budget Calculation and Section 4 Results - Circuit Composition"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Write code to analyze the distribution of the 43 attention heads in the sarcasm circuit across the 12 layers (0-11). \n\nGiven the list of attention heads in the circuit (from the JSON file or as provided below), your code should:\n1. Parse the attention head names to extract layer numbers\n2. Count the number of heads per layer\n3. Group layers into three stages:\n   - Early (L0-L3)\n   - Middle (L4-L7)  \n   - Late (L8-L11)\n4. Print the count per layer and the total per stage\n5. Verify the stage totals match the documentation: Early=9, Middle=19, Late=15\n\nAttention heads in circuit: ['a11.h8', 'a11.h0', 'a4.h11', 'a9.h3', 'a6.h11', 'a8.h5', 'a9.h10', 'a5.h3', 'a10.h5', 'a11.h3', 'a3.h9', 'a10.h9', 'a4.h9', 'a4.h7', 'a3.h11', 'a8.h7', 'a7.h8', 'a6.h0', 'a4.h0', 'a2.h8', 'a5.h4', 'a8.h10', 'a5.h7', 'a4.h1', 'a6.h8', 'a5.h2', 'a11.h11', 'a6.h7', 'a8.h4', 'a3.h2', 'a8.h8', 'a2.h5', 'a6.h4', 'a7.h9', 'a7.h3', 'a4.h3', 'a2.h2', 'a3.h6', 'a6.h5', 'a11.h4', 'a2.h3', 'a8.h2', 'a1.h0']",
+    "answer": "The code should output:\n- Layer distribution showing counts per layer (0-11)\n- Early stage (L0-L3): 9 heads total\n- Middle stage (L4-L7): 19 heads total\n- Late stage (L8-L11): 15 heads total\n\nThis confirms the documentation's statement about the distribution pattern showing dense middle-layer routing (19 heads in L4-L7) and concentrated output integration in late layers (15 heads in L8-L11).",
+    "choice": null,
+    "requires_code": true,
+    "code_id": "CQ2",
+    "reference": "Section 4 Results - Attention Head Components - Distribution by Layer"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Write code to analyze the relative contribution of MLPs versus attention heads to the sarcasm circuit in terms of dimensions.\n\nYour code should:\n1. Calculate the total dimensions from MLPs (10 MLPs \u00d7 768 dims)\n2. Calculate the total dimensions from attention heads (43 heads \u00d7 64 dims)\n3. Calculate the percentage of total circuit dimensions (excluding input) contributed by:\n   - MLPs\n   - Attention heads\n4. Print the results and explain what this ratio tells us about whether the circuit is \"MLP-dominant\" or \"attention-dominant\"\n\nNote: Exclude the input embedding (768 dims) from the percentage calculation since it's always required.\n\nExpected conclusion: The circuit should be MLP-dominant with MLPs contributing ~74% of non-input dimensions.",
+    "answer": "The code should compute:\n- MLP dimensions: 10 \u00d7 768 = 7,680\n- Attention head dimensions: 43 \u00d7 64 = 2,752\n- Total non-input dimensions: 7,680 + 2,752 = 10,432\n- MLP percentage: 7,680 / 10,432 = 73.6%\n- Attention percentage: 2,752 / 10,432 = 26.4%\n\nThis demonstrates the circuit is MLP-dominant, with MLPs contributing nearly 3\u00d7 the dimensions of attention heads. This supports the documentation's finding that the sarcasm circuit differs from the IOI circuit, which is attention-dominant.",
+    "choice": null,
+    "requires_code": true,
+    "code_id": "CQ3",
+    "reference": "Section 5 Analysis - Comparison to IOI Circuit and Section 7 Main Takeaways"
+  }
+]

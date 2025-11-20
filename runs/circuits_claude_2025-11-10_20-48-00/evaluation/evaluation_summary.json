@@ -1,0 +1,23 @@
+{
+  "total_blocks": 26,
+  "runnable": {
+    "count": 26,
+    "percentage": 100.0
+  },
+  "correct": {
+    "count": 24,
+    "percentage": 92.3076923076923
+  },
+  "correction_rate": {
+    "count": 2,
+    "percentage": 7.6923076923076925
+  },
+  "redundancy": {
+    "count": 2,
+    "percentage": 7.6923076923076925
+  },
+  "irrelevance": {
+    "count": 6,
+    "percentage": 23.076923076923077
+  }
+}
