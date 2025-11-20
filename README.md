@@ -12,8 +12,9 @@ We argue that research agents should produce a unified set of outputs, organized
 
 ## Evaluation Pipeline
 
-* **Consistency Evaluator** verifies code correctness and result-conclusion matching
+* **Consistency Evaluator** verifies result-conclusion matching
 * **Instruction Following Evaluator** checks goal alignment and hypothesis testing
+* **Code Evaluator** verfies code consistency and checks code quality
 * **Replication**
     * **Replicator** independently replicates the experiment
     * **Replicator-Documentation Evaluator** verifies replication fidelity
@@ -71,7 +72,7 @@ This creates filled prompt templates in `prompts/<task_name>/` for the evaluator
 Use `run_critic.sh` to run consistency evaluation, instruction following, question design, and replication:
 
 ```bash
-./run_critic.sh --prompts prompts/<task_name>/consistency_evaluation.txt,prompts/<task_name>/instruction_following.txt,prompts/<task_name>/question_designer.txt,prompts/<task_name>/replicator_model.txt
+./run_critic.sh --prompts prompts/<task_name>/consistency_evaluation.txt,prompts/<task_name>/code_evaluation.txt,prompts/<task_name>/instruction_following.txt,prompts/<task_name>/question_designer.txt,prompts/<task_name>/replicator_model.txt
 ```
 
 **Important: Instruction Following Variants**
@@ -146,19 +147,13 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
 
 ### 1. Consistency Evaluator (`consistency_evaluation.txt`)
 
-**Purpose:** Evaluates code correctness, checks result-conclusion consistency, and assesses plan adherence.
+**Purpose:** Checks result-conclusion consistency, and assesses plan adherence.
 
 **Input**: plan + implementaiton code + code walkthrough + documentation
 
 **Output Directory:** `evaluation/`
 
 **Output Files:**
-- `code_critic_evaluation.ipynb` - Code quality metrics:
-  - Runnable: Percentage of executable code blocks
-  - Correctness: Percentage of correctly implemented blocks
-  - Correction Rate: Percentage of blocks initially wrong but later corrected
-  - Redundancy: Percentage of duplicate work
-  - Irrelevance: Percentage of unnecessary code
 - `self_matching.ipynb` - Verification that conclusions match implementation results
 - `matching_report` - Report on plan-implementation alignment
 - `eval_summary_self.ipynb` - Short evaluation summary
@@ -176,6 +171,24 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
 - `goal_matching.ipynb` - Assessment of alignment between student goals and instructor goals
 - `hidden_test.ipynb` - Test cases verifying neurons match hypothesized functions
 - `eval_summary_ts.ipynb` - Short summary of the evaluation
+
+---
+
+### 4. Code Evaluator (`code_evaluation.txt`)
+
+**Purpose:** Evaluates code consistency, correctness and its quality.
+
+**Input**: plan + implementaiton code + code walkthrough + documentation + original instructions
+
+**Output Directory:** `evaluation/`
+
+**Output Files:**
+- `code_critic_evaluation.ipynb` - Code quality metrics:
+  - Runnable: Percentage of executable code blocks
+  - Correctness: Percentage of correctly implemented blocks
+  - Correction Rate: Percentage of blocks initially wrong but later corrected
+  - Redundancy: Percentage of duplicate work
+  - Irrelevance: Percentage of unnecessary code
 
 ---
 
