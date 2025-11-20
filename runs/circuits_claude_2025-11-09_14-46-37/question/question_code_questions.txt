@@ -1,0 +1,20 @@
+[code_id]: CQ1
+Title: Circuit Budget Verification
+Prompt: Write code to verify the write budget of the IOI circuit. Given the circuit nodes list, count the attention heads and MLPs, then calculate the total budget used and utilization percentage.
+Expected_Outcome: Attention heads: 31, MLPs: 12, Total budget used: 11200, Budget utilization: 100.0%
+Reference: Section 4. Results - Budget Verification
+---
+
+[code_id]: CQ2
+Title: Layer Distribution Analysis
+Prompt: Write code to analyze the layer distribution of attention heads in the circuit. Parse each head name to extract its layer, count heads per layer, find the layer with most heads, and count heads in early (0-3) and late (9-11) layers.
+Expected_Outcome: Heads per layer: {0: 4, 1: 1, 3: 2, 6: 1, 7: 2, 8: 5, 9: 6, 10: 7, 11: 3}, Layer with most heads: 10 (7 heads), Early layer heads (0-3): 7, Late layer heads (9-11): 16
+Reference: Section 4. Results - Layer Distribution and Section 5. Analysis - Key Observations
+---
+
+[code_id]: CQ3
+Title: Attention Score Ranking Analysis
+Prompt: Write code to analyze the attention scores across the three head types. Calculate mean scores for each type, identify which type has the highest mean, count heads with high selectivity (>0.5), and find the overall top head.
+Expected_Outcome: Mean duplicate token score: 0.5479, Mean S-inhibition score: 0.4193, Mean name mover score: 0.6697, Highest mean type: Name Mover, High selectivity counts (>0.5): Duplicate=4, S-Inhibition=2, Name-Mover=4, Top head overall: a9.h9 (0.7998)
+Reference: Section 3.3 Analysis Pipeline - Attention Pattern Analysis
+---

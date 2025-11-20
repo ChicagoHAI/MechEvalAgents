@@ -1,0 +1,181 @@
+[
+  {
+    "question_type": "multiple_choice",
+    "question": "What is the primary research objective of the IOI circuit analysis?",
+    "answer": "B",
+    "choice": [
+      "A. Train GPT2-small to perform better on name identification tasks",
+      "B. Identify a precise circuit in GPT2-small that implements IOI behavior within a dimension budget",
+      "C. Compare IOI performance across different transformer models",
+      "D. Develop a new attention mechanism for indirect object identification"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 1. Goal - Research Objective"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "According to the IOI hypothesis, which of the following correctly describes the three functional components and their attention patterns?",
+    "answer": "C",
+    "choice": [
+      "A. Duplicate Token Heads (END\u2192S1), S-Inhibition Heads (S2\u2192END), Name-Mover Heads (IO\u2192END)",
+      "B. Duplicate Token Heads (S1\u2192S2), S-Inhibition Heads (S2\u2192END), Name-Mover Heads (END\u2192IO)",
+      "C. Duplicate Token Heads (S2\u2192S1), S-Inhibition Heads (END\u2192S2), Name-Mover Heads (END\u2192IO)",
+      "D. Duplicate Token Heads (S2\u2192S1), S-Inhibition Heads (IO\u2192S2), Name-Mover Heads (END\u2192S1)"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 1. Goal - Hypothesis"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Given the example sentence 'As Carl and Maria left the consulate, Carl gave a fridge to', identify the S1, S2, IO, and END positions. Explain why Carl appears twice and what role each position plays in the IOI circuit hypothesis.",
+    "answer": "S1 is position 2 ('Carl' - first mention of subject), S2 is position 9 ('Carl' - second mention of subject), IO is position 4 ('Maria' - indirect object), and END is position 13 ('to' - final position). Carl appears twice because it is the subject who performs the action. S1 and S2 are used by Duplicate Token Heads to detect repeated names, which helps the model identify that Carl is the subject. The END position is where the model predicts the next token (the answer), using S-Inhibition Heads to avoid predicting the subject (Carl) and Name-Mover Heads to copy the indirect object (Maria).",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 2. Data - Key Positions and Example Sentence Structure"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "In GPT2-small, how many dimensions does each attention head write to the residual stream?",
+    "answer": "B",
+    "choice": [
+      "A. 768 dimensions",
+      "B. 64 dimensions",
+      "C. 3,072 dimensions",
+      "D. 12 dimensions"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 3.2 Write Budget Constraints"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The final IOI circuit contains 31 attention heads and 12 MLPs. Show the calculation to verify that this circuit uses exactly 11,200 dimensions and achieves 100% budget utilization.",
+    "answer": "Attention heads: 31 heads \u00d7 64 dimensions/head = 1,984 dimensions. MLPs: 12 MLPs \u00d7 768 dimensions/MLP = 9,216 dimensions. Total: 1,984 + 9,216 = 11,200 dimensions. Budget limit is 11,200 dimensions, so utilization = 11,200/11,200 = 100%.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4. Results - Budget Verification"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "Which attention head showed the highest average attention score for Name-Mover behavior (END\u2192IO attention)?",
+    "answer": "D",
+    "choice": [
+      "A. a3.h0 with 0.7191 average attention",
+      "B. a8.h6 with 0.7441 average attention",
+      "C. a10.h7 with 0.7829 average attention",
+      "D. a9.h9 with 0.7998 average attention"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 3.3 Analysis Pipeline - Name-Mover Heads"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The documentation shows that Duplicate Token Heads are found in early layers (0-3), S-Inhibition Heads in middle layers (7-8), and Name-Mover Heads in late layers (9-11). Explain why this layered distribution makes sense from an information processing perspective.",
+    "answer": "This layered distribution reflects a logical information processing pipeline: (1) Early layers (0-3) detect basic patterns like token repetition - Duplicate Token Heads need to identify that a name appears twice before any inhibition or moving can occur; (2) Middle layers (7-8) use the duplication signal to inhibit attention to the subject - S-Inhibition Heads must wait for duplicate detection before they can suppress the subject; (3) Late layers (9-11) perform the final prediction by moving the IO token to the output - Name-Mover Heads rely on the inhibition of the subject to correctly attend to and copy the indirect object. This sequential dependency ensures each component has the necessary information from earlier components.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 5. Analysis - Key Observations - Layered Processing"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What baseline accuracy did GPT2-small achieve on the IOI task before any circuit interventions?",
+    "answer": "C",
+    "choice": [
+      "A. 100%",
+      "B. 84%",
+      "C. 94%",
+      "D. 74%"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 3.3 Analysis Pipeline - Step 1: Baseline Evaluation"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The final circuit includes 6 Duplicate Token Heads, 12 S-Inhibition Heads, and 15 Name-Mover Heads (31 total). Why might there be more Name-Mover Heads than Duplicate Token Heads in the circuit?",
+    "answer": "There are more Name-Mover Heads because: (1) The name-moving task is more complex - it requires attending to a specific position and copying token information to the output, which may benefit from redundancy; (2) Late layers (where Name-Movers are) need to robustly override any residual preference for the subject; (3) Duplicate token detection is a simpler pattern-matching task that requires fewer specialized heads; (4) The redundancy in Name-Mover Heads provides robustness - if one head fails, others can compensate. Additionally, more heads with strong END\u2192IO attention were found (scores >0.7) compared to S2\u2192S1 attention, suggesting the model allocates more resources to the final prediction step.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4. Results - Attention Head Breakdown by Function and Section 5. Analysis - Redundancy"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "How many examples from the IOI dataset were used for the analysis in this study?",
+    "answer": "B",
+    "choice": [
+      "A. 10,000 examples",
+      "B. 100 examples",
+      "C. 1,000 examples",
+      "D. 50 examples"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 2. Data - Dataset (100 used for analysis)"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Based on the results, evaluate whether the three-component IOI hypothesis was supported. What specific evidence from the attention pattern analysis supports or contradicts the hypothesis?",
+    "answer": "The three-component hypothesis was strongly supported by the evidence: (1) Duplicate Token Heads: Found 6 heads with strong S2\u2192S1 attention, with a3.h0 showing 0.72 average attention. These are in early layers (0, 1, 3), consistent with early pattern detection; (2) S-Inhibition Heads: Found 12 heads with strong END\u2192S2 attention, with a8.h6 showing 0.74 average attention. These are in middle layers (7, 8, 9), appropriate for inhibition; (3) Name-Mover Heads: Found 15 heads with strong END\u2192IO attention, with a9.h9 showing 0.80 average attention. These are in late layers (9, 10, 11), ideal for final prediction. The high selectivity (>0.7 attention scores) and appropriate layer distribution provide strong empirical support for the hypothesized circuit structure.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 5. Analysis - Support for Hypothesis"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What is the total number of nodes in the final IOI circuit?",
+    "answer": "D",
+    "choice": [
+      "A. 31 nodes",
+      "B. 12 nodes",
+      "C. 43 nodes",
+      "D. 44 nodes"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4. Results - Final Circuit Composition (1 input + 31 heads + 12 MLPs = 44)"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The documentation mentions 'Cross-Dataset Validation' as a potential extension. Describe a specific experiment that could test whether the identified IOI circuit generalizes to other name-based tasks, and what results would support or refute generalization.",
+    "answer": "Experiment: Test the identified circuit on a different name-based task such as 'Who said what' sentences (e.g., 'John told Mary that John liked...' where the answer should be 'Mary'). Method: (1) Create or find a dataset with similar S1/S2/IO structure but different sentence patterns; (2) Measure attention patterns of the identified 31 heads on this new task; (3) Compare attention scores for each head category (Duplicate Token, S-Inhibition, Name-Mover). Supporting results: If the same heads show similar attention patterns (S2\u2192S1, END\u2192S2, END\u2192IO) with comparable scores (>0.5), this supports generalization. Refuting results: If the heads show different attention patterns or significantly lower scores on the new task, this suggests the circuit is task-specific rather than implementing a general name-tracking mechanism.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 6. Next Steps - Cross-Dataset Validation"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Write code to verify the IOI circuit budget calculation. Given the circuit contains 31 attention heads (each writing 64 dimensions) and 12 MLPs (each writing 768 dimensions), calculate:\n1. Total dimensions used by attention heads\n2. Total dimensions used by MLPs  \n3. Total circuit dimensions\n4. Budget utilization percentage (budget limit is 11,200)\n\nPrint each value with appropriate labels.",
+    "answer": "The code should output: Attention heads: 1984 dimensions, MLPs: 9216 dimensions, Total: 11200 dimensions, Utilization: 100.0%",
+    "choice": null,
+    "requires_code": true,
+    "code_id": "CQ1",
+    "reference": "Section 3.2 Write Budget Constraints and Section 4. Results - Budget Verification"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Write code to analyze the layer distribution of the IOI circuit heads. Given the following selected attention heads:\n['a0.h1', 'a0.h10', 'a0.h5', 'a0.h6', 'a1.h11', 'a3.h0', 'a3.h6', 'a6.h0', 'a7.h3', 'a7.h9', 'a8.h10', 'a8.h2', 'a8.h3', 'a8.h5', 'a8.h6', 'a9.h0', 'a9.h2', 'a9.h6', 'a9.h7', 'a9.h8', 'a9.h9', 'a10.h0', 'a10.h1', 'a10.h10', 'a10.h2', 'a10.h3', 'a10.h6', 'a10.h7', 'a11.h10', 'a11.h6', 'a11.h8']\n\nCalculate and print:\n1. Number of heads per layer (0-11)\n2. Total number of heads\n3. Which layer has the most heads",
+    "answer": "Layer distribution: Layer 0: 4, Layer 1: 1, Layer 3: 2, Layer 6: 1, Layer 7: 2, Layer 8: 5, Layer 9: 6, Layer 10: 7, Layer 11: 3. Total: 31 heads. Layer 10 has the most heads (7).",
+    "choice": null,
+    "requires_code": true,
+    "code_id": "CQ2",
+    "reference": "Section 4. Results - Layer Distribution"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Write code to verify the attention score rankings for the three head types. Given the following attention scores:\n\nDuplicate Token Heads (S2\u2192S1):\n- a3.h0: 0.7191, a1.h11: 0.6613, a0.h5: 0.6080, a0.h1: 0.5152, a0.h10: 0.2359\n\nS-Inhibition Heads (END\u2192S2):\n- a8.h6: 0.7441, a7.h9: 0.5079, a8.h10: 0.3037, a8.h5: 0.2852, a9.h7: 0.2557\n\nName-Mover Heads (END\u2192IO):\n- a9.h9: 0.7998, a10.h7: 0.7829, a9.h6: 0.7412, a11.h10: 0.6369, a10.h0: 0.3877\n\nFor each head type, calculate and print:\n1. The mean attention score of the top 5 heads\n2. The head with highest attention score\n3. Whether the top head has attention > 0.7 (strong selectivity)",
+    "answer": "Duplicate Token: mean=0.5479, top=a3.h0, strong=True. S-Inhibition: mean=0.4193, top=a8.h6, strong=True. Name-Mover: mean=0.6697, top=a9.h9, strong=True. All three head types have their top head with attention > 0.7.",
+    "choice": null,
+    "requires_code": true,
+    "code_id": "CQ3",
+    "reference": "Section 3.3 Analysis Pipeline - Step 2: Attention Pattern Analysis"
+  }
+]

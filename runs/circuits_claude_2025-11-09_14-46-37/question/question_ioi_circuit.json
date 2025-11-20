@@ -1,0 +1,236 @@
+[
+  {
+    "question_type": "multiple_choice",
+    "question": "What is the primary research objective of the IOI circuit analysis experiment?",
+    "answer": "C",
+    "choice": [
+      "A) Train GPT2-small to perform the IOI task from scratch",
+      "B) Compare different transformer architectures on the IOI task",
+      "C) Identify a precise circuit in GPT2-small that implements IOI behavior within a write budget constraint",
+      "D) Optimize GPT2-small's performance on the IOI task"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 1. Goal - Research Objective"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "According to the three-component hypothesis, what is the function of S-Inhibition Heads?",
+    "answer": "B",
+    "choice": [
+      "A) Attend from S2 to S1 to detect duplicate tokens",
+      "B) Attend from END to S2 to inhibit Name-Mover attention to subject positions",
+      "C) Attend from END to IO to copy the indirect object",
+      "D) Attend from S1 to END to establish positional context"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 1. Goal - Hypothesis"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "What dataset was used for this analysis, and how many examples were used? Identify the four key positions in the IOI sentence structure.",
+    "answer": "The dataset used was mib-bench/ioi from Hugging Face. While the full dataset contains 10,000 examples, only 100 examples were used for the analysis. The four key positions are: S1 (first mention of subject), S2 (second mention of subject), IO (indirect object), and END (final position where prediction is made).",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 2. Data - Dataset and Key Positions"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What is the d_head dimension in GPT2-small, and how is it calculated?",
+    "answer": "B",
+    "choice": [
+      "A) 768, calculated as d_model",
+      "B) 64, calculated as d_model / n_heads",
+      "C) 3072, calculated as 4 \u00d7 d_model",
+      "D) 12, calculated as n_heads"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 3.1 Model Configuration"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Explain the write budget allocation in this experiment. How many dimensions does each attention head write? How many dimensions does each MLP write?",
+    "answer": "Each attention head writes 64 dimensions (d_model / n_heads = 768 / 12 = 64). Each MLP writes 768 dimensions (d_model). The total write budget constraint is \u2264 11,200 dimensions.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 3.2 Write Budget Constraints"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What was GPT2-small's baseline accuracy on the IOI task?",
+    "answer": "D",
+    "choice": [
+      "A) 100%",
+      "B) 72%",
+      "C) 80%",
+      "D) 94%"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 3.3 Analysis Pipeline - Step 1: Baseline Evaluation"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Which attention head had the highest average S2\u2192S1 attention score for duplicate token detection, and what was its score?",
+    "answer": "a3.h0 (attention head 0 in layer 3) had the highest S2\u2192S1 attention score of 0.7191 for duplicate token detection.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 3.3 Analysis Pipeline - Duplicate Token Heads"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "How many total nodes are in the final circuit, and what is their breakdown?",
+    "answer": "C",
+    "choice": [
+      "A) 31 nodes: 19 attention heads and 12 MLPs",
+      "B) 43 nodes: 31 attention heads and 12 MLPs",
+      "C) 44 nodes: 1 input, 31 attention heads, and 12 MLPs",
+      "D) 44 nodes: 32 attention heads and 12 MLPs"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4. Results - Final Circuit Composition"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Describe the layer distribution pattern of the three types of attention heads in the identified circuit. Which layers contain each type?",
+    "answer": "The circuit exhibits clear layered processing: Duplicate Token Heads are in early-to-middle layers (0, 1, 3), S-Inhibition Heads are in middle-to-late layers (7, 8, 9), and Name-Mover Heads are concentrated in late layers (9, 10, 11). This stratification supports the hypothesis of sequential processing from token detection to subject inhibition to final prediction.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 5. Analysis - Key Observations"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "According to the final circuit composition, how many attention heads belong to each functional category?",
+    "answer": "A",
+    "choice": [
+      "A) 6 Duplicate Token Heads, 12 S-Inhibition Heads, 15 Name-Mover Heads",
+      "B) 10 Duplicate Token Heads, 10 S-Inhibition Heads, 11 Name-Mover Heads",
+      "C) 8 Duplicate Token Heads, 8 S-Inhibition Heads, 15 Name-Mover Heads",
+      "D) 5 Duplicate Token Heads, 15 S-Inhibition Heads, 11 Name-Mover Heads"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4. Results - Attention Head Breakdown by Function"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Given the final circuit composition of 31 attention heads and 12 MLPs, calculate the total write budget used. Show your work and explain why this configuration achieves 100% budget utilization.",
+    "answer": "Total budget = (31 attention heads \u00d7 64 dims/head) + (12 MLPs \u00d7 768 dims/MLP) = 1,984 + 9,216 = 11,200 dimensions. This achieves exactly 100% utilization of the 11,200-dimension budget constraint. The researchers strategically selected 31 heads (starting with top performers from each category, then adding 21 more high-scoring heads) and included all 12 MLPs to maximize circuit expressiveness while respecting the budget.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4. Results - Budget Verification"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Explain the causal mechanism by which the three types of heads work together to solve the IOI task. How does information flow from S1 to the final prediction?",
+    "answer": "The causal mechanism works as follows: (1) Duplicate Token Heads in early layers (0, 1, 3) detect that S1 and S2 are the same name by attending from S2 to S1, signaling token duplication through position features. (2) S-Inhibition Heads in middle layers (7, 8, 9) receive this duplication signal and attend from END to S2, which inhibits the Name-Mover heads from attending to the subject positions. (3) Name-Mover Heads in late layers (9, 10, 11) attend from END to IO (the non-repeated name) and copy this token to the residual stream for prediction. This layered processing ensures the model predicts the indirect object instead of the repeated subject.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 5. Analysis - Support for Hypothesis and Key Observations"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "If the IOI task were modified so that the sentence structure changed from 'A and B ... A gave to __' to 'B and A ... A gave to __' (swapping the order of first appearance), which component of the hypothesis would need to be reconsidered first?",
+    "answer": "A",
+    "choice": [
+      "A) Duplicate Token Heads, because S1 and S2 positions would change relative to IO position",
+      "B) S-Inhibition Heads, because they wouldn't know which token to inhibit",
+      "C) Name-Mover Heads, because they would attend to the wrong position",
+      "D) MLPs, because they would fail to transform features correctly"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 2. Data - Example Sentence Structure and Section 3.3 Attention Pattern Analysis"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The documentation mentions that the IOI circuit uses only 10.1% of total model capacity. Calculate the total possible dimensions in GPT2-small and explain what this sparse representation implies about how the model implements the IOI task.",
+    "answer": "Total possible dimensions = (12 layers \u00d7 12 heads \u00d7 64 dims/head) + (12 MLPs \u00d7 768 dims/MLP) = 9,216 + 9,216 = 18,432 for attention + 9,216 for MLPs. Actually, total capacity = all attention heads (144 \u00d7 64 = 9,216) + all MLPs (12 \u00d7 768 = 9,216) = 110,592 dimensions mentioned in the documentation. The 11,200-dimension circuit represents 10.1% of this capacity. This sparse representation implies that the IOI task is implemented by a relatively compact subcircuit, suggesting that the model has learned an efficient, modular solution rather than distributing the behavior across all components. This supports the hypothesis of specialized functional components.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 7. Main Takeaways - Point 5"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "Why was attention averaging across all 100 examples used to identify functional head types rather than analyzing individual examples?",
+    "answer": "C",
+    "choice": [
+      "A) To reduce computational cost",
+      "B) To increase the number of data points",
+      "C) To find heads with consistent, specialized behavior across contexts rather than context-dependent heads",
+      "D) To enable statistical significance testing"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 3.3 Analysis Pipeline and Code Walkthrough - Averaging Across Examples"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Explain why all 12 MLPs were included in the circuit even though the main focus was on attention head analysis. What role do MLPs play in the IOI circuit?",
+    "answer": "All 12 MLPs were included because they provide essential nonlinear transformations for circuit computation. Specifically: (1) Early layer MLPs (0, 1) are needed for basic feature extraction, (2) MLPs in layers with selected attention heads support local computation, and (3) Middle layer MLPs (2, 4, 5, 6) provide feature transformation between head operations. MLPs are critical for transforming the positional and identity features that attention heads detect and pass forward, enabling the layered processing pattern from duplicate detection to subject inhibition to name moving.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Code Walkthrough - MLP Selection and Rationale"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The documentation mentions 'Negative Name Movers' as an alternative hypothesis to explore. Based on your understanding of the circuit, what might be the function of Negative Name Mover heads and how would they complement the existing three-component hypothesis?",
+    "answer": "Negative Name Movers would be heads that move S (subject) tokens to suppress them in the final prediction, rather than just inhibiting attention to them. While S-Inhibition Heads prevent Name-Movers from attending to subject positions, Negative Name Movers would actively reduce the probability of the subject token by writing negative contributions to its output logit. This would complement the existing hypothesis by adding a 'push-pull' mechanism: Name-Movers increase IO probability while Negative Name-Movers decrease S probability, making the distinction more robust. This would be especially useful in cases where simple inhibition isn't sufficient.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 6. Next Steps - Alternative Hypotheses to Explore"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "If ablation studies were performed and removing a8.h6 (the top S-Inhibition Head with 0.74 attention score) caused minimal performance drop, what would be the most likely explanation?",
+    "answer": "B",
+    "choice": [
+      "A) The S-Inhibition hypothesis is incorrect",
+      "B) The circuit has redundant S-Inhibition heads that compensate for the ablation",
+      "C) S-Inhibition is not necessary for the IOI task",
+      "D) The attention score measurement was inaccurate"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 5. Analysis - Key Observations (Redundancy) and Section 6. Next Steps (Ablation Studies)"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Write code to verify the write budget of the IOI circuit. Given the circuit nodes list, count the attention heads and MLPs, then calculate the total budget used and utilization percentage.",
+    "answer": "Attention heads: 31, MLPs: 12, Total budget used: 11200, Budget utilization: 100.0%",
+    "choice": null,
+    "requires_code": true,
+    "code_id": "CQ1",
+    "reference": "Section 4. Results - Budget Verification"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Write code to analyze the layer distribution of attention heads in the circuit. Parse each head name to extract its layer, count heads per layer, find the layer with most heads, and count heads in early (0-3) and late (9-11) layers.",
+    "answer": "Heads per layer: {0: 4, 1: 1, 3: 2, 6: 1, 7: 2, 8: 5, 9: 6, 10: 7, 11: 3}, Layer with most heads: 10 (7 heads), Early layer heads (0-3): 7, Late layer heads (9-11): 16",
+    "choice": null,
+    "requires_code": true,
+    "code_id": "CQ2",
+    "reference": "Section 4. Results - Layer Distribution and Section 5. Analysis - Key Observations"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Write code to analyze the attention scores across the three head types. Calculate mean scores for each type, identify which type has the highest mean, count heads with high selectivity (>0.5), and find the overall top head.",
+    "answer": "Mean duplicate token score: 0.5479, Mean S-inhibition score: 0.4193, Mean name mover score: 0.6697, Highest mean type: Name Mover, High selectivity counts (>0.5): Duplicate=4, S-Inhibition=2, Name-Mover=4, Top head overall: a9.h9 (0.7998)",
+    "choice": null,
+    "requires_code": true,
+    "code_id": "CQ3",
+    "reference": "Section 3.3 Analysis Pipeline - Attention Pattern Analysis"
+  }
+]

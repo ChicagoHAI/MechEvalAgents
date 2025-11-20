@@ -1,0 +1,194 @@
+[
+  {
+    "question_type": "multiple_choice",
+    "question": "What is the primary research objective of the IOI circuit analysis experiment?",
+    "choice": [
+      "A) Train GPT2-small to perform the IOI task from scratch",
+      "B) Compare different transformer architectures on the IOI task",
+      "C) Identify a precise circuit in GPT2-small that implements IOI behavior within a write budget constraint",
+      "D) Optimize GPT2-small's performance on the IOI task"
+    ],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "According to the three-component hypothesis, what is the function of S-Inhibition Heads?",
+    "choice": [
+      "A) Attend from S2 to S1 to detect duplicate tokens",
+      "B) Attend from END to S2 to inhibit Name-Mover attention to subject positions",
+      "C) Attend from END to IO to copy the indirect object",
+      "D) Attend from S1 to END to establish positional context"
+    ],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "What dataset was used for this analysis, and how many examples were used? Identify the four key positions in the IOI sentence structure.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What is the d_head dimension in GPT2-small, and how is it calculated?",
+    "choice": [
+      "A) 768, calculated as d_model",
+      "B) 64, calculated as d_model / n_heads",
+      "C) 3072, calculated as 4 \u00d7 d_model",
+      "D) 12, calculated as n_heads"
+    ],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Explain the write budget allocation in this experiment. How many dimensions does each attention head write? How many dimensions does each MLP write?",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What was GPT2-small's baseline accuracy on the IOI task?",
+    "choice": [
+      "A) 100%",
+      "B) 72%",
+      "C) 80%",
+      "D) 94%"
+    ],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Which attention head had the highest average S2\u2192S1 attention score for duplicate token detection, and what was its score?",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "How many total nodes are in the final circuit, and what is their breakdown?",
+    "choice": [
+      "A) 31 nodes: 19 attention heads and 12 MLPs",
+      "B) 43 nodes: 31 attention heads and 12 MLPs",
+      "C) 44 nodes: 1 input, 31 attention heads, and 12 MLPs",
+      "D) 44 nodes: 32 attention heads and 12 MLPs"
+    ],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Describe the layer distribution pattern of the three types of attention heads in the identified circuit. Which layers contain each type?",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "According to the final circuit composition, how many attention heads belong to each functional category?",
+    "choice": [
+      "A) 6 Duplicate Token Heads, 12 S-Inhibition Heads, 15 Name-Mover Heads",
+      "B) 10 Duplicate Token Heads, 10 S-Inhibition Heads, 11 Name-Mover Heads",
+      "C) 8 Duplicate Token Heads, 8 S-Inhibition Heads, 15 Name-Mover Heads",
+      "D) 5 Duplicate Token Heads, 15 S-Inhibition Heads, 11 Name-Mover Heads"
+    ],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Given the final circuit composition of 31 attention heads and 12 MLPs, calculate the total write budget used. Show your work and explain why this configuration achieves 100% budget utilization.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Explain the causal mechanism by which the three types of heads work together to solve the IOI task. How does information flow from S1 to the final prediction?",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "If the IOI task were modified so that the sentence structure changed from 'A and B ... A gave to __' to 'B and A ... A gave to __' (swapping the order of first appearance), which component of the hypothesis would need to be reconsidered first?",
+    "choice": [
+      "A) Duplicate Token Heads, because S1 and S2 positions would change relative to IO position",
+      "B) S-Inhibition Heads, because they wouldn't know which token to inhibit",
+      "C) Name-Mover Heads, because they would attend to the wrong position",
+      "D) MLPs, because they would fail to transform features correctly"
+    ],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The documentation mentions that the IOI circuit uses only 10.1% of total model capacity. Calculate the total possible dimensions in GPT2-small and explain what this sparse representation implies about how the model implements the IOI task.",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "Why was attention averaging across all 100 examples used to identify functional head types rather than analyzing individual examples?",
+    "choice": [
+      "A) To reduce computational cost",
+      "B) To increase the number of data points",
+      "C) To find heads with consistent, specialized behavior across contexts rather than context-dependent heads",
+      "D) To enable statistical significance testing"
+    ],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Explain why all 12 MLPs were included in the circuit even though the main focus was on attention head analysis. What role do MLPs play in the IOI circuit?",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The documentation mentions 'Negative Name Movers' as an alternative hypothesis to explore. Based on your understanding of the circuit, what might be the function of Negative Name Mover heads and how would they complement the existing three-component hypothesis?",
+    "choice": null,
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "If ablation studies were performed and removing a8.h6 (the top S-Inhibition Head with 0.74 attention score) caused minimal performance drop, what would be the most likely explanation?",
+    "choice": [
+      "A) The S-Inhibition hypothesis is incorrect",
+      "B) The circuit has redundant S-Inhibition heads that compensate for the ablation",
+      "C) S-Inhibition is not necessary for the IOI task",
+      "D) The attention score measurement was inaccurate"
+    ],
+    "requires_code": false,
+    "code_id": null
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Write code to verify the write budget of the IOI circuit. Given the circuit nodes list, count the attention heads and MLPs, then calculate the total budget used and utilization percentage.",
+    "choice": null,
+    "requires_code": true,
+    "code_id": "CQ1"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Write code to analyze the layer distribution of attention heads in the circuit. Parse each head name to extract its layer, count heads per layer, find the layer with most heads, and count heads in early (0-3) and late (9-11) layers.",
+    "choice": null,
+    "requires_code": true,
+    "code_id": "CQ2"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Write code to analyze the attention scores across the three head types. Calculate mean scores for each type, identify which type has the highest mean, count heads with high selectivity (>0.5), and find the overall top head.",
+    "choice": null,
+    "requires_code": true,
+    "code_id": "CQ3"
+  }
+]
