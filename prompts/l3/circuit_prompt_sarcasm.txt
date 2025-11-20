@@ -9,7 +9,7 @@ You are a **senior mechanistic interpretability researcher**.
 ### MODEL AND DATA
 
 * Use model: **gpt2-small** loaded via **HookedTransformer**.
-* Use dataset: **mib-bench/sarcasm** (synthetic or real sarcasm-labeled sentences).
+* Use dataset: synthetic or real sarcasm-labeled sentences.
 * Ignore files under `runs/`.
 
 ---
