@@ -83,7 +83,7 @@ Choose the appropriate instruction following prompt based on your task:
 This step generates:
 - Consistency evaluation results (`evaluation/`)
 - Instruction following evaluation (`evaluation/`)
-- Question files for testing understanding (`exam/`)
+- Question files for testing understanding (`question/`)
 - Replication attempts (`evaluations/replications/`)
 
 ### Step 4: Construct Student and Replicator Evaluator Prompts
@@ -133,7 +133,7 @@ Use `run_critic.sh` for final grading and replicator evaluation:
 ```
 
 This evaluates:
-- Student's answers using the Grader (`exam/grade/`)
+- Student's answers using the Grader (`question/grade/`)
 - Replication fidelity using the Replicator-Documentation Evaluator (`evaluations/replication/`)
 
 ## Evaluation Processes and Output Files
@@ -226,11 +226,11 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
 
 **Input**: plan + implementaiton code + code walkthrough + documentation
 
-**Output Directory:** `exam/`
+**Output Directory:** `question/`
 
 **Output Files:**
-- `exam_documentation.ipynb` - Notebook containing generated questions and gold answers
-- `exam_{task_name}.json` - Structured question data in JSON format
+- `question_documentation.ipynb` - Notebook containing generated questions and gold answers
+- `question_{task_name}.json` - Structured question data in JSON format
   - Contains: question type (multiple-choice or free-generation), question text, correct answer, choices (if applicable), and reference to documentation section
 
 ---
@@ -240,7 +240,7 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
 
 **Input**: documentation + question
 
-**Output Directory:** `exam/`
+**Output Directory:** `question/`
 
 **Output Files:**
 - `student_answer.ipynb`: all the answers to the questions
@@ -255,7 +255,7 @@ Note: You can also use `student_simulator.ipynb` to pass in non code-agent model
 
 **Input**: questions + student's answers + documentation
 
-**Output Directory:** `exam/grade/`
+**Output Directory:** `question/grade/`
 
 **Output Files:**
 - `grading_results.json` - Per-question grading results with scores, feedback, and external reference detection

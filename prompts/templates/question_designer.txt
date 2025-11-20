@@ -53,11 +53,12 @@ Ensure questions are **non-trivial**, **conceptually coherent**, and **self-cont
 * Use **multiple-choice**, **free-generation**, or **structured explanation**.
 * Each question must map to at least one key knowledge point.
 * Questions must require comprehension/reasoning (no trivial lookup).
-* No need to test on budgets.
+* Do not design any question related to budget.
 
 #### 3) Code-Based Causal/Intervention Verification (Required)
 
 Create **2–3 code questions** that require writing code to **verify generalized interventions or causal claims** implied by the documentation (e.g., counterfactual swapping, minimal interventions, robustness trends).
+Do not design any question related to budget.
 
 For each code question:
 
