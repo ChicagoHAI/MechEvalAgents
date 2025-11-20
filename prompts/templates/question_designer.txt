@@ -30,7 +30,7 @@ No need to look at evaluation.
 
 ### GOAL
 
-Design a **comprehensive and rigorous exam** that measures both:
+Design **comprehensive and rigorous exam questions** that test both:
 
 1. **Understanding of documented facts and concepts** (definitions, hypotheses, setup, findings).
 2. **Ability to apply, reason, and generalize** (transfer to related or novel settings; causal/mechanistic reasoning).
@@ -80,7 +80,7 @@ For code questions, the **solution cell** must compute and print the expected re
 
 ### OUTPUT FORMAT
 
-All exam items must be output as valid **JSON** (each element is one question):
+All question items must be output as valid **JSON** (each element is one question):
 
 ```json
 {{
@@ -98,30 +98,30 @@ All exam items must be output as valid **JSON** (each element is one question):
 
 ### OUTPUT FILES
 
-Write **all** outputs under `{REPO_PATH}/exam/` (create the directory if missing; respect file names exactly):
+Write **all** outputs under `{REPO_PATH}/question/` (create the directory if missing; respect file names exactly):
 
-1. **`exam_documentation.ipynb`**
+1. **`question_documentation.ipynb`**
 
    * Contains: knowledge key points; **all questions** (including code question **stubs only**).
    * Do **not** include code solutions here (stubs + instructions only).
 
-2. **`exam_{{task_name}}.json`**
+2. **`question_{{task_name}}.json`**
 
    * JSON array of all questions using the schema above.
    * Include `"requires_code"` and `"code_id"` for code questions.
 
-3.**`exam_{{task_name}}_student_version.json`**
+3.**`question_{{task_name}}_student_version.json`**
    * JSON array of all questions using the schema above except answer and reference
    * do not include answer and refernce
 
-4. **`exam_code_questions.txt`** *(new, required)*
+4. **`question_code_questions.txt`** *(new, required)*
 
    * Plain text index **listing only the code questions**, one block per code question with this exact structure:
 
    ```
    [code_id]: CQ1
    Title: <1-line title>
-   Prompt: <the student-facing code prompt in exam_documentation.ipynb>
+   Prompt: <the student-facing code prompt in question_documentation.ipynb>
    Expected_Outcome: <what the solution computes/prints; include tolerance if applicable>
    Reference: <doc section/figure/concept>
    ---
@@ -129,11 +129,11 @@ Write **all** outputs under `{REPO_PATH}/exam/` (create the directory if missing
 
    * Repeat the block for CQ2, CQ3, etc.
 
-5. **`exam_code_solutions.ipynb`** *(new, required)*
+5. **`question_code_solutions.ipynb`** *(new, required)*
 
    * Contains **only the code questions**, each with:
 
-     * A **student-facing stub** cell (identical to the stub in `exam_documentation.ipynb`).
+     * A **student-facing stub** cell (identical to the stub in `question_documentation.ipynb`).
      * A **`# SOLUTION`** cell (hidden/clearly marked) that computes and prints the expected result.
      * An **auto-check** cell validating the result (with tolerance).
    * Order questions by `code_id`.
@@ -148,7 +148,7 @@ Write **all** outputs under `{REPO_PATH}/exam/` (create the directory if missing
 * Applied questions demand **reasoning/transfer**, not memorization.
 * Answers are **accurate**, **justified**, **internally consistent**.
 * Include at least one question per major section/concept cluster.
-* **Code questions** must be runnable, deterministic, fast, and compute their own answers in `exam_code_solutions.ipynb`.
+* **Code questions** must be runnable, deterministic, fast, and compute their own answers in `question_code_solutions.ipynb`.
 * Balance:
 
   * 40–60% factual understanding
