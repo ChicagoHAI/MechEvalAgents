@@ -1,0 +1,227 @@
+[
+  {
+    "question_type": "multiple_choice",
+    "question": "In the ICoT multiplication task, the numbers are represented in a specific digit order. How would the multiplication problem 8331 \u00d7 5015 be formatted as input to the model?",
+    "answer": "B",
+    "choice": [
+      "A) 8331 * 5015",
+      "B) 1338 * 5105",
+      "C) 3318 * 1505",
+      "D) 5015 * 8331"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 2 (Data) - operands written least-significant digit first"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "Which of the following statements correctly describes the performance difference between ICoT and standard fine-tuning (SFT) models on 4\u00d74 digit multiplication?",
+    "answer": "C",
+    "choice": [
+      "A) Both achieve >95% accuracy, but ICoT trains faster",
+      "B) SFT achieves 81% accuracy while ICoT achieves 100%",
+      "C) ICoT achieves 100% accuracy while SFT achieves <1% accuracy",
+      "D) ICoT achieves 99% accuracy only when using auxiliary loss"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4 (Results) - Model Performance table showing ICoT 100%, SFT <1%"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Describe the two-layer attention tree mechanism discovered in the ICoT model. What role does each layer play in computing the output digits?",
+    "answer": "The ICoT model implements a two-layer attention tree mechanism: Layer 1 (Caching) - attention heads attend to pairs of input digits {a\u1d62, b\u2c7c} and cache their pairwise products a\u1d62b\u2c7c in the hidden states h\u00b9. Layer 2 (Retrieval) - attention heads attend back to previous timesteps where relevant cached products are stored and retrieve them for the current computation. This creates a shallow directed acyclic graph (binary-tree-like structure) that enables efficient propagation of information from input digits to output digits through intermediate cached computations.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4 (Results) - Discovered Mechanisms: Attention Tree Structure"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "The ICoT model represents digits using Fourier bases. Which set of frequency components (k values) are used in the discovered Fourier basis representation?",
+    "answer": "B",
+    "choice": [
+      "A) k \u2208 {0, 1, 2, 3, 4}",
+      "B) k \u2208 {0, 1, 2, 5}",
+      "C) k \u2208 {0, 2, 4, 5}",
+      "D) k \u2208 {1, 2, 3, 4, 5}"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4 (Results) - Fourier Basis Embeddings describing \u03a6(n) with k \u2208 {0, 1, 2, 5}"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Explain why standard fine-tuning (SFT) fails to learn multi-digit multiplication, despite the model having sufficient capacity. What specific pattern is observed in gradient norms and loss during SFT training?",
+    "answer": "SFT fails because it converges to a local optimum that lacks the necessary computational structure for long-range dependencies. The failure pattern shows: (1) The model first learns the easiest digits c\u2080, c\u2081 (first two) and c\u2087 (last digit) which depend on local patterns. (2) Early digits receive gradients initially, but gradient norms drop to zero after learning those digits. (3) Middle digits c\u2083-c\u2086 receive gradients but their loss plateaus - the model gets stuck without discovering the attention tree mechanism. (4) There is no gradient signal that encourages the discovery of the binary-tree caching structure needed for long-range dependencies. This is an optimization problem, not a capacity problem, as even a 12-layer model shows identical failure.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 5 (Analysis) - Standard Fine-Tuning Failure Pattern and Why SFT Fails"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "What geometric structure emerges in the ICoT model's attention head outputs, and how is it mathematically characterized?",
+    "answer": "A",
+    "choice": [
+      "A) Minkowski sums: ATT\u00b9(i,j) = \u03b1A\u1d62 + (1-\u03b1)B\u2c7c + \u03b5, creating nested cluster structures",
+      "B) Euclidean products: ATT\u00b9(i,j) = A\u1d62 \u00b7 B\u2c7c, creating orthogonal representations",
+      "C) Tensor products: ATT\u00b9(i,j) = A\u1d62 \u2297 B\u2c7c, creating high-dimensional embeddings",
+      "D) Cartesian products: ATT\u00b9(i,j) = (A\u1d62, B\u2c7c), creating paired representations"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4 (Results) - Minkowski Sums in Attention Heads"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "How many chain-of-thought (CoT) tokens are removed per epoch during ICoT training, and how many total epochs are needed for convergence?",
+    "answer": "D",
+    "choice": [
+      "A) 5 tokens per epoch, 10 epochs total",
+      "B) 10 tokens per epoch, 8 epochs total",
+      "C) 13 tokens per epoch, 8 epochs total",
+      "D) 8 tokens per epoch, 13 epochs total"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 3 (Method) - Training Procedures: ICoT Training"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "What do the linear probe experiments reveal about the ICoT model's internal representations? Specifically, what is being probed, and what do the results indicate about the difference between ICoT and SFT models?",
+    "answer": "The linear probe experiments test whether the intermediate running sum \u0109\u2096 can be decoded from hidden states at layer 2. Linear probes are trained to predict \u0109\u2096 (the accumulated sum at position k) from the hidden state at timestep t_c\u2096 using mean squared error loss. Results show dramatic differences: ICoT models achieve very low mean absolute error (<2.0 for most digits, as low as 0.56 for \u0109\u2086), indicating the running sum is explicitly represented in the hidden states. In contrast, SFT models have high MAE (28.22 to 113.27), showing they do not maintain or represent these intermediate values. This demonstrates that ICoT models learn to encode long-range dependencies through explicit internal representation of intermediate computations, which SFT models fail to develop.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4 (Results) - Linear Probe Results table and interpretation"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Based on the discovered mechanisms in the ICoT model for 4\u00d74 digit multiplication, predict what architectural changes would be necessary to successfully learn 6\u00d76 digit multiplication using the same ICoT training approach. Justify your prediction.",
+    "answer": "For 6\u00d76 digit multiplication, more layers would likely be needed because the attention tree depth scales with the number of digits. The 2-layer architecture works for 4\u00d74 digits where Layer 1 caches pairwise products and Layer 2 retrieves them. For 6\u00d76 digits producing up to 12 output digits, later digits like c\u2081\u2080 or c\u2081\u2081 would require products from many more digit pairs (up to 11 different pairs). A 2-layer tree may not provide sufficient depth to cache and compose all necessary intermediate values. The model would likely need 3-4 layers to handle the increased dependency depth. Additionally, more attention heads per layer might be beneficial to cache the larger number of distinct partial products (36 possible pairs for 6\u00d76 vs 16 for 4\u00d74). The embedding dimension (768) might be sufficient, but could benefit from increase to accommodate richer intermediate representations.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4 (Results) - Attention Tree Structure; Section 6 (Next Steps) - Generalization Testing"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "Suppose you wanted to train a model to perform multi-digit division using insights from the ICoT multiplication study. Which training approach would most likely succeed?",
+    "answer": "C",
+    "choice": [
+      "A) Standard fine-tuning on division problems with a 12-layer model",
+      "B) Standard fine-tuning on division problems with more training data",
+      "C) ICoT-style training with gradual removal of long-division step tokens",
+      "D) Training only on the final quotient without any intermediate steps"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 5 (Analysis) - ICoT Success Mechanism; Section 7 (Main Takeaways) - Core Insight #4"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The ICoT model shows specific logit attribution patterns where input digit positions affect output digits. Based on the multiplication algorithm, explain why digit a\u1d62 should affect output digit c\u2096 most strongly when there exists a digit b\u2c7c such that i+j=k. What does this pattern reveal about the model's learned algorithm?",
+    "answer": "In standard multi-digit multiplication, each output digit c\u2096 is computed from partial products where the indices sum to k: c\u2096 depends on terms like a\u2080b_k, a\u2081b_(k-1), a\u2082b_(k-2), ..., up to a_kb\u2080, plus any carry from c_(k-1). This means a\u1d62 contributes to c\u2096 through its product with b_(k-i), so the strongest effect occurs when i+j=k. The fact that ICoT's logit attribution shows exactly this pattern (strongest effects when i+j=k) reveals that the model has learned the mathematically correct algorithm for multiplication. It correctly identifies which digit pairs need to be multiplied together for each output position. This is evidence of genuine long-range dependencies: early input digits (like a\u2080, a\u2081) correctly influence later output digits (like c\u2086, c\u2087) through the appropriate intermediate computations, exactly as the multiplication algorithm requires.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4 (Results) - Logit Attribution Results; Section 1 (Goal) - Circuit Objective #1"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The auxiliary loss model achieves 99% accuracy without explicit chain-of-thought tokens by predicting \u0109\u2096 values. Why does this approach work? What inductive bias does it provide that standard fine-tuning lacks?",
+    "answer": "The auxiliary loss works by providing explicit supervision on intermediate computations that the model needs to perform internally. By training linear probes attached to layer 2 attention heads to predict the running sum \u0109\u2096 at each position, the model receives gradient signals that encourage: (1) Encoding intermediate values in hidden states in a linearly accessible format, (2) Developing attention patterns that aggregate the correct partial products, (3) Building representations that maintain long-range dependencies needed for computing \u0109\u2096. This inductive bias directly addresses what standard fine-tuning lacks: SFT only receives gradients from the final output digits, providing no signal to develop internal representations of intermediate steps. The auxiliary loss essentially tells the model 'you need to know these intermediate values', guiding it toward the computational structure (attention trees, Fourier bases) needed for correct multiplication without requiring explicit CoT tokens.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 3 (Method) - Auxiliary Loss Model; Section 7 (Main Takeaways) - Core Insight #5"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "A researcher hypothesizes that SFT fails at 4\u00d74 multiplication due to insufficient model capacity, and proposes training a 24-layer, 16-head model. Based on the paper's findings, what would be the most likely outcome?",
+    "answer": "B",
+    "choice": [
+      "A) The larger model would achieve >90% accuracy due to increased capacity",
+      "B) The larger model would still achieve <1% accuracy, failing identically to smaller models",
+      "C) The larger model would achieve 50-60% accuracy, showing partial improvement",
+      "D) The larger model would require less training data to achieve 100% accuracy"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4 (Results) - SFT scaled 12L8H still <1%; Section 7 (Main Takeaways) - Core Insight #3 on scaling"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Describe the pentagonal prism geometry discovered in ICoT's 3D PCA analysis. What do the three principal components represent, and why does this geometry emerge?",
+    "answer": "The pentagonal prism geometry appears when performing 3D PCA on digit representations (embeddings or hidden states). The structure consists of: PC1 represents the parity vector p(n) = (-1)\u207f, which separates even and odd digits into two parallel planes. PC2 and PC3 represent the k=2 Fourier component pair [cos(2\u03c0n/5), sin(2\u03c0n/5)], which forms two regular pentagons - one for even digits (0,2,4,6,8) and one for odd digits (1,3,5,7,9). Together, these create a pentagonal prism structure. This geometry emerges because it efficiently represents modular arithmetic: the k=2 Fourier basis naturally captures the base-10 structure (5 evens, 5 odds), and this representation facilitates the modular addition and carry operations needed for multiplication. The Fourier basis provides a compact, mathematically structured encoding that the model discovers as optimal for the task.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4 (Results) - Fourier Basis Embeddings: 3D PCA Structure"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "When training linear probes to decode the running sum \u0109\u2096, which location in the model provides the best decoding accuracy?",
+    "answer": "C",
+    "choice": [
+      "A) Layer 0 residual stream (after first layer MLP)",
+      "B) Layer 1 residual stream (after second layer MLP)",
+      "C) Layer 2 mid-point (after attention, before MLP)",
+      "D) Final hidden layer before unembedding"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 5 (Analysis) - Key Findings from Ablations: Probe Locations"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "The paper identifies that SFT fails due to an 'optimization problem' rather than a 'capacity problem'. Explain what this distinction means and provide evidence from the paper supporting this conclusion.",
+    "answer": "An optimization problem means the model has sufficient representational capacity but gradient descent fails to find the right solution, converging instead to a suboptimal local minimum. A capacity problem would mean the model architecture fundamentally cannot represent the solution. Evidence for optimization problem: (1) Scaling to 12L8H (6x larger) produces identical <1% accuracy, ruling out capacity constraints. (2) The 2L4H architecture successfully achieves 100% with ICoT training, proving the capacity exists. (3) Gradient analysis shows SFT receives gradients for middle digits but loss plateaus - the model is 'stuck' not 'unable'. (4) Auxiliary loss enables the same 2L4H architecture to reach 99% accuracy, confirming capacity is sufficient. (5) The attention tree structure discovered in ICoT models could in principle be learned by SFT, but the autoregressive loss provides no gradient signal to discover it. This demonstrates a failure of the optimization procedure (gradient descent + autoregressive loss) to find the solution, not a fundamental architectural limitation.",
+    "choice": [],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 5 (Analysis) - Why SFT Fails; Section 7 (Main Takeaways) - Core Insight #3"
+  },
+  {
+    "question_type": "multiple_choice",
+    "question": "In the Fourier basis analysis, what median R\u00b2 value is achieved when fitting the ICoT model's final hidden layer representations using all Fourier frequencies k \u2208 {0,1,2,3,4,5}?",
+    "answer": "D",
+    "choice": [
+      "A) 0.84",
+      "B) 0.95",
+      "C) 0.99",
+      "D) 1.0"
+    ],
+    "requires_code": false,
+    "code_id": null,
+    "reference": "Section 4 (Results) - Fourier Fit Quality table showing h^L achieves R\u00b2=1.0 with full basis"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Write code to verify the logit attribution pattern discovered in ICoT models. Specifically, test the hypothesis that input digit position a\u1d62 has the strongest effect on output digit c\u2096 when there exists a position j such that i+j=k.\n\nYour code should:\n1. Load the ICoT model checkpoint\n2. Create a batch of 100 random 4\u00d74 multiplication problems\n3. For each problem, compute logit attribution by: (a) recording baseline logits for output positions c\u2082 through c\u2086, (b) for each input digit position, create a counterfactual by swapping the digit, (c) measure the change in logits\n4. For each output position c\u2096 (k=2 to 6), compute the average absolute logit change for each input position\n5. Identify which input positions have the highest attribution scores for each output position\n6. Verify if the pattern matches i+j=k (print the top-3 most influential input positions for each output)\n\nExpected output: For each output digit c\u2096, the positions with indices that sum to k should show highest attribution.",
+    "answer": "See solution in question_code_solutions.ipynb",
+    "choice": [],
+    "requires_code": true,
+    "code_id": "CQ1",
+    "reference": "Section 4 (Results) - Logit Attribution Results; code_walkthrough.md - Logit Attribution procedure"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Write code to replicate the linear probe experiment that demonstrates ICoT models encode the running sum \u0109\u2096 in their hidden states.\n\nYour code should:\n1. Load the ICoT model and extract hidden states at layer 2 mid-point (after attention, before MLP)\n2. For a validation set of 200 multiplication problems, extract hidden states at the timestep where c\u2096 is being computed (for k=2,3,4)\n3. Compute the ground truth \u0109\u2096 values (sum of all partial products with indices \u2264 k plus any carry)\n4. Train a simple linear regression probe (using sklearn or torch) to predict \u0109\u2096 from the hidden states\n5. Evaluate the Mean Absolute Error (MAE) on a held-out test set of 100 problems\n6. Print the MAE for each k \u2208 {2,3,4}\n\nExpected outcome: MAE should be low (<5.0) for all three positions, demonstrating that \u0109 values are linearly decodable from hidden states.",
+    "answer": "See solution in question_code_solutions.ipynb",
+    "choice": [],
+    "requires_code": true,
+    "code_id": "CQ2",
+    "reference": "Section 4 (Results) - Linear Probe Results; code_walkthrough.md - Linear Regression Probing procedure"
+  },
+  {
+    "question_type": "free_generation",
+    "question": "Write code to compute the R\u00b2 fit of the Fourier basis representation for digit embeddings in the ICoT model.\n\nYour code should:\n1. Load the ICoT model and extract the embedding matrix for digits 0-9\n2. Construct the Fourier basis matrix \u03a6 with frequencies k \u2208 {0, 1, 2, 5}:\n   - Column 0: constant (all 1s)\n   - Columns 1-2: cos(2\u03c0n/10), sin(2\u03c0n/10) for n=0..9\n   - Columns 3-4: cos(2\u03c0n/5), sin(2\u03c0n/5) for n=0..9  \n   - Column 5: parity p(n) = (-1)\u207f for n=0..9\n3. For each dimension d in the embedding (768 dims), extract the vector x_d of length 10 (values for digits 0-9)\n4. Fit coefficients: C_d = argmin_C ||x_d - \u03a6C||\u00b2\n5. Compute R\u00b2 = 1 - ||x_d - \u03a6C_d||\u00b2 / ||x_d - mean(x_d)||\u00b2\n6. Report the median R\u00b2 across all embedding dimensions\n\nExpected outcome: Median R\u00b2 should be high (>0.80), confirming Fourier basis structure in embeddings.",
+    "answer": "See solution in question_code_solutions.ipynb",
+    "choice": [],
+    "requires_code": true,
+    "code_id": "CQ3",
+    "reference": "Section 4 (Results) - Fourier Fit Quality; code_walkthrough.md - Fourier Basis Analysis"
+  }
+]
