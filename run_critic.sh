@@ -6,7 +6,7 @@ set -euo pipefail
 # ───────────────────────────────────────────────
 
 # Define the prompts (defaults)
-CIRCUIT_PROMPTS=("prompts/ioi_l2/consistency_evaluation.txt" "prompts/ioi_l2/instruction_following.txt" "prompts/ioi_l2/question_designer.txt" "prompts/ioi_l2/replicator_model.txt")
+CIRCUIT_PROMPTS=("prompts/ioi_l2/consistency_evaluation.txt" "prompts/ioi_l2/instruction_following.txt" "prompts/ioi_l2/question_designer.txt" "prompts/ioi_l2/replicator_model.txt" "prompts/ioi_l2/code_evaluation.txt")
 
 PROVIDERS="claude"  # Default to claude only
 CONCURRENT_LIMIT=3  # Default concurrent sessions
