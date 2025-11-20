@@ -276,7 +276,7 @@ If you find our repo helpful, please cite:
 ```
 @software{mechinterp_evaluate_agent,
   title={MechEvalAgents: Grounded Evaluation of Research Agents in Mechanistic Interpretability},
-  author={Xiaoyan Bai},
+  author={Xiaoyan Bai, Ari Holtzman, Chenhao Tan},
   year={2025},
   url={https://github.com/ChicagoHAI/MechEvalAgents}
 }
