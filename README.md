@@ -174,7 +174,7 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
 
 ---
 
-### 4. Code Evaluator (`code_evaluation.txt`)
+### 3. Code Evaluator (`code_evaluation.txt`)
 
 **Purpose:** Evaluates code consistency, correctness and its quality.
 
@@ -192,7 +192,7 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
 
 ---
 
-### 3.a. Replicator Model (`replicator_model.txt`)
+### 4.a. Replicator Model (`replicator_model.txt`)
 
 **Purpose:** Independently replicates experiment results without copying original code.
 
@@ -214,7 +214,7 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
 
 ---
 
-### 3.b. Replicator-Documentation Evaluator (`replicator_evaluator.txt`)
+### 4.b. Replicator-Documentation Evaluator (`replicator_evaluator.txt`)
 
 **Purpose:** Verifies that replicated results and conclusions match the original experiment.
 
@@ -233,7 +233,7 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
     - External Reference Discipline
   - Final decision (Pass / Revise)
 
-### 4.a. Question Designer (`question_designer.txt`)
+### 5.a. Question Designer (`question_designer.txt`)
 
 **Purpose:** Creates comprehensive assessments from research documentation to test understanding of documented facts and ability to apply concepts.
 
@@ -247,7 +247,7 @@ The input of our evaluation pipeline is [unified outputs](#unified-research-agen
   - Contains: question type (multiple-choice or free-generation), question text, correct answer, choices (if applicable), and reference to documentation section
 
 ---
-### 4.b. Student (`student.txt`)
+### 5.b. Student (`student.txt`)
 
 **Purpose:** take the test
 
@@ -262,7 +262,7 @@ Note: You can also use `student_simulator.ipynb` to pass in non code-agent model
 
 ---
 
-### 4.c. Grader (`grader.txt`)
+### 5.c. Grader (`grader.txt`)
 
 **Purpose:** Evaluates student answers to questions, checking both correctness and whether answers rely only on provided documentation.
 
@@ -287,7 +287,7 @@ The evaluations will be in the repo you want to evaluate. There will be another 
 ## Citation
 If you find our repo helpful, please cite:
 ```
-@software{mechinterp_evaluate_agent,
+@misc{mechinterp_evaluate_agent,
   title={MechEvalAgents: Grounded Evaluation of Research Agents in Mechanistic Interpretability},
   author={Xiaoyan Bai, Ari Holtzman, Chenhao Tan},
   year={2025},
