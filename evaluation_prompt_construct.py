@@ -22,7 +22,8 @@ def fill_evaluation_prompts(repo_path, task_name, system_prompt_path=None, repli
         "question_designer.txt",
         "instruction_following.txt",
         "replicator_model.txt",
-        "grader.txt"
+        "grader.txt",
+        "summary.txt"
     ]
 
     if replication:
