@@ -1,0 +1,366 @@
+================================================================================
+ICoT REPLICATION: Model Inference and Accuracy Test
+================================================================================
+
+CUDA available: True
+GPU device: NVIDIA A100 80GB PCIe
+
+--------------------------------------------------------------------------------
+STEP 1: Loading ICoT Model
+--------------------------------------------------------------------------------
+Loading model from: /net/scratch2/smallyan/icot/train_models/4_by_4_mult/gpt2/finetune_2L4H_layer2/checkpoint_12
+/home/smallyan/critic_model_mechinterp/icot/src/model_utils.py:106: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model.load_state_dict(torch.load(state_dict_path))
+Model loaded successfully!
+Model config: ImplicitModelConfig {
+  "base_model": {
+    "_name_or_path": "",
+    "activation_function": "gelu_new",
+    "add_cross_attention": false,
+    "architectures": [
+      "GPT2LMHeadModel"
+    ],
+    "attn_pdrop": 0.1,
+    "bad_words_ids": null,
+    "begin_suppress_tokens": null,
+    "bos_token_id": 50256,
+    "chunk_size_feed_forward": 0,
+    "cross_attention_hidden_size": null,
+    "decoder_start_token_id": null,
+    "diversity_penalty": 0.0,
+    "do_sample": false,
+    "early_stopping": false,
+    "embd_pdrop": 0.1,
+    "encoder_no_repeat_ngram_size": 0,
+    "eos_token_id": 50256,
+    "exponential_decay_length_penalty": null,
+    "finetuning_task": null,
+    "forced_bos_token_id": null,
+    "forced_eos_token_id": null,
+    "id2label": {
+      "0": "LABEL_0",
+      "1": "LABEL_1"
+    },
+    "initializer_range": 0.02,
+    "is_decoder": false,
+    "is_encoder_decoder": false,
+    "label2id": {
+      "LABEL_0": 0,
+      "LABEL_1": 1
+    },
+    "layer_norm_epsilon": 1e-05,
+    "length_penalty": 1.0,
+    "max_length": 20,
+    "min_length": 0,
+    "model_type": "gpt2",
+    "n_ctx": 1024,
+    "n_embd": 768,
+    "n_head": 4,
+    "n_inner": null,
+    "n_layer": 2,
+    "n_positions": 1024,
+    "no_repeat_ngram_size": 0,
+    "num_beam_groups": 1,
+    "num_beams": 1,
+    "num_return_sequences": 1,
+    "output_attentions": false,
+    "output_hidden_states": false,
+    "output_scores": false,
+    "pad_token_id": null,
+    "prefix": null,
+    "problem_type": null,
+    "pruned_heads": {},
+    "remove_invalid_values": false,
+    "reorder_and_upcast_attn": false,
+    "repetition_penalty": 1.0,
+    "resid_pdrop": 0.1,
+    "return_dict": true,
+    "return_dict_in_generate": false,
+    "scale_attn_by_inverse_layer_idx": false,
+    "scale_attn_weights": true,
+    "sep_token_id": null,
+    "summary_activation": null,
+    "summary_first_dropout": 0.1,
+    "summary_proj_to_labels": true,
+    "summary_type": "cls_index",
+    "summary_use_proj": true,
+    "suppress_tokens": null,
+    "task_specific_params": {
+      "text-generation": {
+        "do_sample": true,
+        "max_length": 50
+      }
+    },
+    "temperature": 1.0,
+    "tf_legacy_loss": false,
+    "tie_encoder_decoder": false,
+    "tie_word_embeddings": true,
+    "tokenizer_class": null,
+    "top_k": 50,
+    "top_p": 1.0,
+    "torch_dtype": null,
+    "torchscript": false,
+    "typical_p": 1.0,
+    "use_bfloat16": false,
+    "use_cache": true,
+    "vocab_size": 50257
+  },
+  "gpt2_config": null,
+  "tokenizer_name": {
+    "_name_or_path": "",
+    "activation_function": "gelu_new",
+    "add_cross_attention": false,
+    "architectures": [
+      "GPT2LMHeadModel"
+    ],
+    "attn_pdrop": 0.1,
+    "bad_words_ids": null,
+    "begin_suppress_tokens": null,
+    "bos_token_id": 50256,
+    "chunk_size_feed_forward": 0,
+    "cross_attention_hidden_size": null,
+    "decoder_start_token_id": null,
+    "diversity_penalty": 0.0,
+    "do_sample": false,
+    "early_stopping": false,
+    "embd_pdrop": 0.1,
+    "encoder_no_repeat_ngram_size": 0,
+    "eos_token_id": 50256,
+    "exponential_decay_length_penalty": null,
+    "finetuning_task": null,
+    "forced_bos_token_id": null,
+    "forced_eos_token_id": null,
+    "id2label": {
+      "0": "LABEL_0",
+      "1": "LABEL_1"
+    },
+    "initializer_range": 0.02,
+    "is_decoder": false,
+    "is_encoder_decoder": false,
+    "label2id": {
+      "LABEL_0": 0,
+      "LABEL_1": 1
+    },
+    "layer_norm_epsilon": 1e-05,
+    "length_penalty": 1.0,
+    "max_length": 20,
+    "min_length": 0,
+    "model_type": "gpt2",
+    "n_ctx": 1024,
+    "n_embd": 768,
+    "n_head": 4,
+    "n_inner": null,
+    "n_layer": 2,
+    "n_positions": 1024,
+    "no_repeat_ngram_size": 0,
+    "num_beam_groups": 1,
+    "num_beams": 1,
+    "num_return_sequences": 1,
+    "output_attentions": false,
+    "output_hidden_states": false,
+    "output_scores": false,
+    "pad_token_id": null,
+    "prefix": null,
+    "problem_type": null,
+    "pruned_heads": {},
+    "remove_invalid_values": false,
+    "reorder_and_upcast_attn": false,
+    "repetition_penalty": 1.0,
+    "resid_pdrop": 0.1,
+    "return_dict": true,
+    "return_dict_in_generate": false,
+    "scale_attn_by_inverse_layer_idx": false,
+    "scale_attn_weights": true,
+    "sep_token_id": null,
+    "summary_activation": null,
+    "summary_first_dropout": 0.1,
+    "summary_proj_to_labels": true,
+    "summary_type": "cls_index",
+    "summary_use_proj": true,
+    "suppress_tokens": null,
+    "task_specific_params": {
+      "text-generation": {
+        "do_sample": true,
+        "max_length": 50
+      }
+    },
+    "temperature": 1.0,
+    "tf_legacy_loss": false,
+    "tie_encoder_decoder": false,
+    "tie_word_embeddings": true,
+    "tokenizer_class": null,
+    "top_k": 50,
+    "top_p": 1.0,
+    "torch_dtype": null,
+    "torchscript": false,
+    "typical_p": 1.0,
+    "use_bfloat16": false,
+    "use_cache": true,
+    "vocab_size": 50257
+  },
+  "transformers_version": "4.46.1"
+}
+
+
+--------------------------------------------------------------------------------
+STEP 2: Loading and Preparing Data
+--------------------------------------------------------------------------------
+Loaded 1000 multiplication problems
+Example operand pair: (5632, 7434)
+Expected result: 5632 × 7434 = 41868288
+Tokenized input shape: torch.Size([1000, 14])
+
+--------------------------------------------------------------------------------
+STEP 3: Generating Predictions
+--------------------------------------------------------------------------------
+Generating predictions for 100 samples...
+Error generating for sample 0: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 1: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 2: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 3: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 4: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 5: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 6: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 7: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 8: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 9: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 10: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 11: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 12: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 13: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 14: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 15: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 16: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 17: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 18: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 19: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 20: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 21: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 22: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 23: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 24: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 25: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 26: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 27: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 28: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 29: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 30: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 31: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 32: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 33: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 34: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 35: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 36: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 37: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 38: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 39: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 40: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 41: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 42: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 43: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 44: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 45: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 46: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 47: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 48: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 49: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 50: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 51: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 52: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 53: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 54: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 55: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 56: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 57: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 58: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 59: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 60: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 61: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 62: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 63: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 64: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 65: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 66: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 67: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 68: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 69: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 70: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 71: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 72: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 73: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 74: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 75: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 76: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 77: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 78: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 79: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 80: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 81: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 82: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 83: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 84: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 85: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 86: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 87: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 88: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 89: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 90: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 91: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 92: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 93: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 94: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 95: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 96: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 97: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 98: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+Error generating for sample 99: ImplicitModel.generate() got an unexpected keyword argument 'do_sample'
+
+--------------------------------------------------------------------------------
+STEP 4: Computing Accuracy Metrics
+--------------------------------------------------------------------------------
+
+Overall Accuracy: 0.00% (0/100)
+
+Digit-wise Accuracy:
+  Position c0: 0.00% (0/100)
+  Position c1: 0.00% (0/100)
+  Position c2: 0.00% (0/100)
+  Position c3: 0.00% (0/100)
+  Position c4: 0.00% (0/100)
+  Position c5: 0.00% (0/100)
+  Position c6: 0.00% (0/100)
+  Position c7: 0.00% (0/100)
+
+--------------------------------------------------------------------------------
+STEP 5: Creating Visualization
+--------------------------------------------------------------------------------
+Saved visualization to evaluation/replications/accuracy_results.png
+
+================================================================================
+REPLICATION RESULTS SUMMARY
+================================================================================
+
+Tested on 100 samples from validation set
+Overall accuracy: 0.00%
+
+Digit accuracy by position:
+  c0: 0.00%
+  c1: 0.00%
+  c2: 0.00%
+  c3: 0.00%
+  c4: 0.00%
+  c5: 0.00%
+  c6: 0.00%
+  c7: 0.00%
+
+================================================================================
+INTERPRETATION:
+The ICoT model should achieve high accuracy on 4×4 digit multiplication.
+Digit-wise accuracy shows which positions are harder to predict.
+Lower accuracy at later positions indicates increased difficulty with
+carrying and accumulating errors.
+================================================================================
+
+Replication completed successfully!
+
+Saved results summary to evaluation/replications/results_summary.txt

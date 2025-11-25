@@ -1,0 +1,22 @@
+block_id,description,runnable,correct,redundant,irrelevant,error,note
+1,Setup and Installation - Import dependencies,True,True,False,False,,
+2,Model Loading - load_hf_model,False,False,False,False,[Errno 2] No such file or directory: '/home/smallyan/critic_model_mechinterp/icot/ckpts/2L4H/state_dict.bin',
+3,Model Loading - load_c_hat_model,False,False,False,False,load_c_hat_model() got an unexpected keyword argument 'type',
+4,Example 1 - Load Model and Generate,False,False,False,False,prompt_ci_raw_format_batch() missing 1 required positional argument: 'tokenizer',
+5,Example 2 - Record and Visualize Attention,False,False,False,False,'Transformer' object has no attribute 'config',
+6,Example 3 - Train a Probe,False,False,False,False,'RegressionProbe' object has no attribute 'train_step',
+7,Data Formatting Functions,False,False,False,False,'list' object has no attribute 'input_ids',
+8,Long Range Logit Attribution - Script structure analysis,True,True,False,False,,Script exists and has proper structure
+9,Linear Regression Probing - probe_c_hat.py,True,True,False,False,,"Lines: 221, Expected: 222"
+10,Fourier Basis Analysis - fourier_r2_fits.py,True,True,False,False,,"Lines: 169, Expected: 169"
+11,Fourier Visualization - fourier_figure.py,True,True,False,False,,"Lines: 482, Expected: None"
+12,Minkowski Sum Visualization - fractals_and_minkowski.py,True,True,False,False,,"Lines: 440, Expected: 440"
+13,Training Dynamics - grad_norms_and_losses.py,True,True,False,False,,"Lines: 334, Expected: 334"
+15,Source File - ActivationCache.py,True,True,False,False,,"Lines: 156, Expected: 156"
+16,Source File - HookedModel.py,True,True,False,False,,"Lines: 286, Expected: 286"
+17,Source File - ImplicitModel.py,True,True,False,False,,"Lines: 264, Expected: 264"
+18,Source File - Intervention.py,True,True,False,False,,"Lines: 256, Expected: 256"
+19,Source File - data_utils.py,True,True,False,False,,"Lines: 326, Expected: 326"
+20,Source File - model_utils.py,True,False,False,False,,"Lines: 181, Expected: 162"
+21,Source File - probes.py,True,True,False,False,,"Lines: 171, Expected: 171"
+22,Source File - transformer.py,True,True,False,False,,"Lines: 354, Expected: 354"

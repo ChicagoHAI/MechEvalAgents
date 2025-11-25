@@ -1,0 +1,15 @@
+ICoT REPLICATION RESULTS
+============================================================
+
+Dataset: 100 validation samples
+Overall Accuracy: 0.0000
+
+Digit-wise Accuracy:
+  c0: 0.0000
+  c1: 0.0000
+  c2: 0.0000
+  c3: 0.0000
+  c4: 0.0000
+  c5: 0.0000
+  c6: 0.0000
+  c7: 0.0000

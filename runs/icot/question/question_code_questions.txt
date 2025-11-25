@@ -1,0 +1,23 @@
+# Code-Based Questions Index
+# ICoT Multiplication Assessment
+
+[code_id]: CQ1
+Title: Logit Attribution Pattern Verification
+Prompt: Write code to verify the logit attribution pattern discovered in ICoT models. Test the hypothesis that input digit position aᵢ has the strongest effect on output digit cₖ when there exists a position j such that i+j=k. Load the ICoT model, create 100 random 4×4 multiplication problems, compute logit attribution by swapping digits and measuring logit changes, and verify if positions with i+j=k show highest attribution for each output cₖ.
+Expected_Outcome: For each output digit cₖ (k=2 to 6), the code should identify and print the top-3 most influential input positions. The highest attribution scores should consistently appear at positions where i+j=k, confirming the model learned the correct multiplication algorithm structure. Expected pattern: c₂ most influenced by positions where i+j=2, c₃ by i+j=3, etc.
+Reference: Section 4 (Results) - Logit Attribution Results; demonstrates long-range dependencies
+---
+
+[code_id]: CQ2
+Title: Running Sum Linear Probe Accuracy
+Prompt: Write code to replicate the linear probe experiment demonstrating ICoT models encode running sum ĉₖ in hidden states. Load the ICoT model, extract hidden states at layer 2 mid-point for 200 validation problems at timesteps where c₂, c₃, c₄ are computed. Compute ground truth ĉₖ values (sum of partial products with indices ≤ k plus carry). Train linear regression probes to predict ĉₖ from hidden states. Evaluate MAE on 100 test problems and print MAE for k ∈ {2,3,4}.
+Expected_Outcome: The code should compute and print three MAE values (for k=2, 3, 4). All MAE values should be low (<5.0, ideally <3.0), demonstrating that running sum values are linearly accessible from the model's hidden states. Tolerance: MAE < 5.0 for each position indicates successful encoding of intermediate values.
+Reference: Section 4 (Results) - Linear Probe Results table; Section 3 (Method) - Linear Regression Probing
+---
+
+[code_id]: CQ3
+Title: Fourier Basis R² Computation for Digit Embeddings
+Prompt: Write code to compute R² fit of Fourier basis representation for digit embeddings in the ICoT model. Load model and extract embedding matrix for digits 0-9. Construct Fourier basis matrix Φ with frequencies k ∈ {0,1,2,5}: constant, cos(2πn/10), sin(2πn/10), cos(2πn/5), sin(2πn/5), and parity (-1)ⁿ. For each embedding dimension, extract the 10-element vector (for digits 0-9), fit coefficients C, compute R² = 1 - ||x - ΦC||²/||x - mean(x)||². Report median R² across all dimensions.
+Expected_Outcome: The code should print a single median R² value computed across all 768 embedding dimensions. The median R² should be high (>0.80, ideally >0.84), confirming that digit embeddings can be well-explained by the Fourier basis with frequencies k ∈ {0,1,2,5}. This validates the pentagonal prism geometry discovered in the model.
+Reference: Section 4 (Results) - Fourier Fit Quality showing embeddings R²=0.84; demonstrates geometric structure
+---

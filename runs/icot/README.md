@@ -1,0 +1,1 @@
+ Evaluation on repo of the paper [Why Can't Transformers Learn Multiplication? Reverse-Engineering Reveals Long-Range Dependency Pitfalls](https://github.com/ajyl/icot/tree/main)

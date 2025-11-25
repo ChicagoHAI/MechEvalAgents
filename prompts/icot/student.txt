@@ -7,10 +7,10 @@ Use the terminology and concepts exactly as they appear in the document.
 If something is not stated or cannot be inferred, say so.
 
 Here is the documentation:
-{DOCUMENTATION_PATH}
+/home/smallyan/critic_model_mechinterp/icot/icot_restructured/documentation.md
 
 Here is the exam question:
-{EXAM_PATH}
+/home/smallyan/critic_model_mechinterp/icot/question/question_icot_student_version.json
 
 You must write **all answers in a Jupyter notebook**.
 
